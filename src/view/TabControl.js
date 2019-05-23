@@ -258,46 +258,49 @@ class TabControl {
     }
 
     select(tab) {
-        if (!tab || tab === this._activeTab) return;    //如果新选择的标签和原选择的标签相同，则返回
+        if (!tab) return;
+        let oldIndex = this._activeIndex;
         let newIndex = this._tabPageArray.indexOf(tab);
-        if (tab && -1 !== newIndex) {
-            //触发onDeselecting事件
-            if (this.onDeselecting) {
-                if (!this.onDeselecting(this._activeTab, this._activeIndex))
-                    return;
-            }
-            //触发onSelecting事件
-            if (this.onSelecting) {
-                if (!this.onSelecting(tab, newIndex))
-                    return;
-            }
+        if (-1 !== newIndex) {
+            // 切换tab
+            if (tab !== this._activeTab) {
+                if (this.onDeselecting) {
+                    if (!this.onDeselecting(this._activeTab, this._activeIndex))
+                        return;
+                }
+                if (this.onSelecting) {
+                    if (!this.onSelecting(tab, newIndex))
+                        return;
+                }
 
-            try {
-                this._captions.get(this._activeTab.id).classList.remove('active');
-                this._contents.get(this._activeTab.id).classList.remove('active');
-            }
-            catch (ex) {
-            }
-            finally {
-                this._captions.get(tab.id).classList.add('active');
-                this._contents.get(tab.id).classList.add('active');
-            }
-            let oldTab = this._activeTab;
-            let oldIndex = this._activeIndex;
-            this._activeTab = tab;              //更新所选择的标签页
-            this._activeIndex = newIndex;       //更新所选择的标签页序号
+                try {
+                    this._captions.get(this._activeTab.id).classList.remove('active');
+                    this._contents.get(this._activeTab.id).classList.remove('active');
+                }
+                catch (ex) {
+                }
+                finally {
+                    this._captions.get(tab.id).classList.add('active');
+                    this._contents.get(tab.id).classList.add('active');
+                }
+                let oldTab = this._activeTab;
+                //更新所选择的标签页
+                this._activeTab = tab;
 
-            //触发onDeselected事件
-            if (this.onDeselected) {
-                this.onDeselected(oldTab, oldIndex);
+                if (this.onDeselected) {
+                    this.onDeselected(oldTab, oldIndex);
+                }
+                if (this.onSelected) {
+                    this.onSelected(tab, newIndex);
+                }
             }
-            //触发onSelected事件
-            if (this.onSelected) {
-                this.onSelected(tab, newIndex);
-            }
-            //触发onSelectIndexChanged事件
-            if (this.onSelectIndexChanged) {
-                this.onSelectIndexChanged(oldIndex, newIndex);
+            // 切换序号
+            if (oldIndex !== newIndex) {
+                //更新所选择的标签页序号
+                this._activeIndex = newIndex;
+                if (this.onSelectIndexChanged) {
+                    this.onSelectIndexChanged(oldIndex, newIndex);
+                }
             }
         }
     }
