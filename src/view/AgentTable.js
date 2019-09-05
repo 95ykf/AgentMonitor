@@ -10,7 +10,7 @@ class AgentTable extends ContentBox {
 
     constructor({
                     boxClassName,
-                    contentClassName = 'table monitor-table',
+                    contentClassName = 'monitor-table',
                     visible = true,
 
                     agents = [],
@@ -28,7 +28,7 @@ class AgentTable extends ContentBox {
         this.id = `AgentTable-${autoIncrementId++}`;
         this._contentClassName = contentClassName;
 
-        this.tableHeadData = ['坐席名称', '分机', '坐席状态', '当前状态开始时间', '客户电话', '通话类型', '操作', '状态'];
+        this.tableHeadData = ['坐席名称', '分机', '坐席状态', '状态保持时长', '客户电话', '通话类型', '操作', '状态'];
 
         this._rows = agents.map((v, i) => {
             return new AgentTableRow({
@@ -47,17 +47,23 @@ class AgentTable extends ContentBox {
         contentNode.className = this._contentClassName;
 
         let tableNode = document.createElement('table');
-        tableNode.className = 'text-center';
+        tableNode.className = 'table table-hover text-center';
+
         let tableHead = document.createElement('thead');
+        let tableHeadRow = document.createElement('tr');
         this.tableHeadData.forEach((v) => {
             let th = document.createElement('th');
             th.innerText = v;
-            tableHead.appendChild(th);
+            tableHeadRow.appendChild(th);
         });
+        tableHead.appendChild(tableHeadRow);
         tableNode.appendChild(tableHead);
+
+        let tableBody = document.createElement('tbody');
         this._rows.forEach((row) => {
-            tableNode.appendChild(row.create().rootNode);
+            tableBody.appendChild(row.create().rootNode);
         });
+        tableNode.appendChild(tableBody);
 
         contentNode.appendChild(tableNode);
         return contentNode;

@@ -173,8 +173,47 @@
             agentMonitor = new AgentMonitor({
                 renderTo: 'agentMonitor',
                 phoneBar: phoneBar
+                // thisDN: $("#corpVccIdTxt").val() + $("#agentIdTxt").val(),
+                // agentID: $("#corpVccIdTxt").val() + $("#agentIdTxt").val()
             });
             btn.style.display = 'none';
+
+            // 服务器时间同步
+            // phoneBar.connection.ping();
+            // phoneBar.connection.once(3, function (msg) {
+            //     agentMonitor.setTimeOffset(new Date().getTime() - msg.creationTime);
+            //     phoneBar.agentApi.requestMonitorMembers();
+            // });
+            //
+            // phoneBar.connection.on(3202, function (msg) {
+            //     agentMonitor.setMonitorMembers(msg.monitorGroupList);
+            // });
+            // phoneBar.connection.on(588, function (msg) {
+            //     agentMonitor.updateAgentInfo(msg);
+            // });
+            //
+            // // 覆写以下方法
+            // agentMonitor.startAgentsMonitoring = function (agentDNs) {
+            //     phoneBar.agentApi.startAgentsMonitoring(agentDNs);
+            // };
+            // agentMonitor.agentReadyM = function (agentDN) {
+            //     phoneBar.agentApi.agentReadyM(agentDN);
+            // };
+            // agentMonitor.agentNotReadyM = function (agentDN, reason) {
+            //     phoneBar.agentApi.agentNotReadyM(agentDN, reason);
+            // };
+            // agentMonitor.monitorCall = function (callID, agentDN) {
+            //     phoneBar.agentApi.monitorCall(callID, agentDN);
+            // };
+            // agentMonitor.interruptCall = function (callID, agentDN, otherDN) {
+            //     phoneBar.agentApi.doInterruptCall(callID, agentDN, otherDN);
+            // };
+            // agentMonitor.substitute = function (callID, agentDN, otherDN) {
+            //     phoneBar.agentApi.substitute(callID, agentDN, otherDN);
+            // };
+            // agentMonitor.releaseAgentCall = function (callID, agentDN) {
+            //     phoneBar.agentApi.releaseAgentCall(callID, agentDN);
+            // };
         }
     }
 

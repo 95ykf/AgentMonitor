@@ -38,14 +38,17 @@ class AgentStateBar extends ContentBox {
         let contentNode = document.createElement('div');
         contentNode.className = this._contentClassName;
 
-        let ulNode = document.createElement('ul');
-        ulNode.className = 'clearfloat';
+        let tableNode = document.createElement('table');
+        let tableBodyNode = document.createElement('tbody');
+        let trNode = document.createElement('tr');
         this.stateList.forEach((item) => {
             item.element = this._generateSingleStateNode(item);
-            ulNode.appendChild(item.element);
+            trNode.appendChild(item.element);
         });
 
-        contentNode.appendChild(ulNode);
+        tableBodyNode.appendChild(trNode);
+        tableNode.appendChild(tableBodyNode);
+        contentNode.appendChild(tableNode);
         return contentNode;
     }
 
@@ -58,7 +61,7 @@ class AgentStateBar extends ContentBox {
                                  total = 0,
                                  name
                              }) {
-        let stateBtn = document.createElement('li');
+        let stateBtn = document.createElement('td');
         let totalNode = document.createElement('span');
         totalNode.className = `cc-btn ${state}`;
         totalNode.innerText = total;

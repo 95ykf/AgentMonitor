@@ -35,6 +35,7 @@ class AgentTableRow{
         this.onUpdatingAgentInfo = onUpdatingAgentInfo;
 
         this.agentInfo.on('change', this._updateAgentInfoHandler = this.updateAgentInfo.bind(this));
+        this.agentInfo.stateTimer.on('change', this._agentStateTimerHandler = this.updateAgentStateTimer.bind(this));
     }
 
 
@@ -54,9 +55,9 @@ class AgentTableRow{
             let agentStateNode = document.createElement('td');
             agentStateNode.className = 'agentstate';
             agentStateNode.innerText = this.agentInfo.getCurrentStateName();
-            // 当前状态开始事件
-            let startTimeNode = document.createElement('td');
-            startTimeNode.innerText = this.agentInfo.creationTime ? utils.formatDate(new Date(this.agentInfo.creationTime)) : '';
+            // 状态计时
+            let stateTimerNode = this._stateTimerNode = document.createElement('td');
+            stateTimerNode.innerText = this.agentInfo.creationTime ? this.agentInfo.stateTimer.format() : '';
             // 客户电话
             let otherDNNode = document.createElement('td');
             otherDNNode.innerText = this.agentInfo.otherDN;
@@ -89,7 +90,8 @@ class AgentTableRow{
             rowNode.appendChild(agentNameNode);
             rowNode.appendChild(agentDNNode);
             rowNode.appendChild(agentStateNode);
-            rowNode.appendChild(startTimeNode);
+            // rowNode.appendChild(startTimeNode);
+            rowNode.appendChild(stateTimerNode);
             rowNode.appendChild(otherDNNode);
             rowNode.appendChild(callTypeNode);
             rowNode.appendChild(operateNode);
@@ -172,6 +174,18 @@ class AgentTableRow{
     }
 
     /**
+     * 更新坐席状态定时
+     * @param seconds
+     * @param timerValue
+     */
+    updateAgentStateTimer(seconds, timerValue) {
+        if (!this.onUpdatingAgentInfo(this.agentInfo, this)) {
+            return;
+        }
+        this._stateTimerNode.innerText = timerValue;
+    }
+
+    /**
      * 重新设置按钮是否可用状态
      * @private
      */
@@ -204,6 +218,7 @@ class AgentTableRow{
             this.rootNode.parentNode.removeChild(this.rootNode);
         }
         this.agentInfo.off('change', this._updateAgentInfoHandler);
+        this.agentInfo.stateTimer.off('change', this._agentStateTimerHandler);
     }
 
     show() {

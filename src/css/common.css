@@ -576,6 +576,14 @@ button.dim:active:before {
 
 
 /* TABLES */
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+td,
+th {
+    padding: 0;
+}
 
 .table-bordered {
     border: 1px solid #EBEBEB;
@@ -612,9 +620,18 @@ button.dim:active:before {
     padding: 8px;
     vertical-align: middle;
 }
+.table-hover>tbody>tr:hover{background-color:#f5f5f5;}
+.table>caption+thead>tr:first-child>th,.table>colgroup+thead>tr:first-child>th,.table>thead:first-child>tr:first-child>th,.table>caption+thead>tr:first-child>td,.table>colgroup+thead>tr:first-child>td,.table>thead:first-child>tr:first-child>td{border-top:0}
 
-.text-center{text-align: center}
-.text-center thead tr th{text-align: center}
+.table-hover>tbody>tr:hover{background-color:#f5f5f5;}
+
+.text-center,
+.text-center th,
+.text-center tr {
+    text-align: center
+}
+
+
 
 
 

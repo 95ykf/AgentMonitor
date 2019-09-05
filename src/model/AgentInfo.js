@@ -1,5 +1,6 @@
 import EventEmitter from 'eventemitter3';
 import {AgentState, NotReadyReason, CallType} from "../constants";
+import Timer from "./Timer";
 
 /**
  * 坐席
@@ -24,7 +25,7 @@ class AgentInfo extends EventEmitter {
 
         this.state = AgentInfo.OFFLINE;
         this.agentDN = agentDN;
-        this.shortNum = agentDN ? agentDN.substr(-4) : '未识别' ;
+        this.shortNum = agentDN ? agentDN.substr(-4) : '未识别';
         this.agentName = agentName ? agentName : this.shortNum;
         this.agentDept = agentDept;
         this.agentGroup = agentGroup;
@@ -35,6 +36,12 @@ class AgentInfo extends EventEmitter {
         this.otherDN = otherDN;
         this.partState = partState;
         this.creationTime = creationTime;
+        if (creationTime) {
+            let initSeconds = Math.floor((new Date() - new Date(creationTime)) / 1000);
+            this.stateTimer = new Timer(initSeconds).start();
+        } else {
+            this.stateTimer = new Timer();
+        }
     }
 
     update({
@@ -44,8 +51,15 @@ class AgentInfo extends EventEmitter {
                callType = CallType.UNKNOWN,
                otherDN = '',
                partState = -1,
-               creationTime = new Date().valueOf(),
-           }={}) {
+               creationTime,
+           } = {}) {
+
+        if (creationTime) {
+            let initSeconds = Math.floor((new Date() - new Date(creationTime)) / 1000);
+            this.stateTimer.restart(initSeconds);
+        } else {
+            this.stateTimer.stop();
+        }
 
         this.state = AgentInfo.convertToLocalState(agentState, reasonCode, partState);
         this.rawState = agentState;

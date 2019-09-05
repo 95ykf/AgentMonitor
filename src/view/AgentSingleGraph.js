@@ -26,6 +26,7 @@ class AgentSingleGraph{
         this.onBodyClick = this._hideMenu.bind(this);
 
         this.agentInfo.on('change', this._updateAgentInfoHandler = this.updateAgentInfo.bind(this));
+        this.agentInfo.stateTimer.on('change', this._agentStateTimerHandler = this.updateAgentStateTimer.bind(this));
     }
 
 
@@ -43,6 +44,10 @@ class AgentSingleGraph{
             let agentNameNode = document.createElement('p');
             agentNameNode.className = 'agent-name';
             agentNameNode.innerText = `${this.agentInfo.agentName}`;
+            // 状态保持时长
+            let stateTimerNode = this._stateTimerNode = document.createElement('p');
+            stateTimerNode.className = 'agent-state-timer';
+            stateTimerNode.innerHTML = this.agentInfo.creationTime ? this.agentInfo.stateTimer.format() : '&nbsp;';
 
             let stateMenu = this._stateMenu = this._generateMoreMenu([
                 {onClick: () => {this.onStateMenuClick('ready', this.agentInfo)}, name: '就绪'},
@@ -57,6 +62,7 @@ class AgentSingleGraph{
             ]);
 
             rootNode.appendChild(agentDNNode);
+            rootNode.appendChild(stateTimerNode);
             rootNode.appendChild(agentNameNode);
             rootNode.appendChild(this._generateMonitorButtons(this.agentInfo.getCurrentStateName()));
             rootNode.appendChild(stateMenu);
@@ -142,6 +148,18 @@ class AgentSingleGraph{
             this.create();
             parentNode.replaceChild(this.rootNode, oldChild);
         }
+    }
+
+    /**
+     * 更新坐席状态定时
+     * @param seconds
+     * @param timerValue
+     */
+    updateAgentStateTimer(seconds, timerValue) {
+        if (!this.onUpdatingAgentInfo(this.agentInfo, this)) {
+            return;
+        }
+        this._stateTimerNode.innerText = timerValue;
     }
 
     /**

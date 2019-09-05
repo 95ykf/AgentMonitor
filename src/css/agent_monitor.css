@@ -68,11 +68,10 @@
 
 
 /* 状态展示 */
-.state_bar ul li {
-    float: left;
-    margin-right: 8px;
+.state_bar table {
+    width: 100%;
 }
-.state_bar li>span {
+.state_bar .cc-btn {
     margin-right: 10px;
     cursor: default;
 }
@@ -280,6 +279,12 @@
 .monitor-graph .agent-name {
     color: #fff;
     margin: 5px 0;
+}
+
+.monitor-graph .agent-state-timer {
+    color: #fff;
+    margin-top: 5px;
+    display: inline-block;
 }
 
 /* 离线 */
