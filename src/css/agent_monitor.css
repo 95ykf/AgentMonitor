@@ -466,6 +466,28 @@ ul li.hold .monitor_btns span {
     position: relative;
 }
 
+/* 超时告警 */
+.alarm-control-tool {
+    height: 38px;
+    padding-right: 5px;
+    color: #676a6c;
+    overflow: hidden
+}
+
+.alarm-control-tool span {
+    line-height: 34px;
+    margin: 0 10px;
+}
+
+.alarm-control-tool select {
+    width: 10%;
+    height: 30px;
+}
+
+.alarm-control-tool input {
+    width: 8%;
+    height: 30px;
+}
 
 /*告警动画*/
 .agent-status-alarm {

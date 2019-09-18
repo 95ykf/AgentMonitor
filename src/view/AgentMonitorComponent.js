@@ -207,25 +207,46 @@ export class AgentMonitorComponent {
         alarmSelectorNode.create();
 
         let row = document.createElement('div');
+        let titleNode = document.createElement('div');
+        titleNode.className = 'option_title';
+        titleNode.innerText = '超时告警:';
+
+        let optionsRootNode = document.createElement('div');
+        optionsRootNode.className = 'alarm-control-tool';
+        
+        row.appendChild(titleNode);
+        row.appendChild(optionsRootNode);
+
         // 状态
         let stateSelect = document.createElement('select');
+        stateSelect.className = 'pull-left single-line';
         for(let stateKey in AgentInfo.stateDict) {
             let option = document.createElement('option');
             option.value = stateKey;
             option.innerHTML = AgentInfo.stateDict[stateKey];
             stateSelect.appendChild(option);
         }
-        row.appendChild(stateSelect);
-        row.appendChild(document.createTextNode("大于"));
+        optionsRootNode.appendChild(stateSelect);
+        
+        let oSpanLeft = document.createElement('span');
+        oSpanLeft.className = 'pull-left';
+        oSpanLeft.innerText = '大于'
+        optionsRootNode.appendChild(oSpanLeft);
         // 阈值
         let threshold = document.createElement('input');
+        threshold.className = 'pull-left single-line'
         threshold.type = 'text';
-        row.appendChild(threshold);
-        row.appendChild(document.createTextNode("秒"));
+        optionsRootNode.appendChild(threshold);
+
+        let oSpanright = document.createElement('span');
+        oSpanright.className = 'pull-left';
+        oSpanright.innerText = '秒'
+
+        optionsRootNode.appendChild(oSpanright);
         // 添加按钮
-        let addAlarmBtn = document.createElement('input');
-        addAlarmBtn.type = 'button';
-        addAlarmBtn.value = '添加';
+        let addAlarmBtn = document.createElement('button');
+        addAlarmBtn.className = 'cc-btn btn-sm btn-primary pull-left';
+        addAlarmBtn.innerText = '添加';
         addAlarmBtn.onclick = () => {
             // 状态和阈值必填
             if (!stateSelect.value || !threshold.value) {
@@ -235,7 +256,7 @@ export class AgentMonitorComponent {
             let _n = `${AgentInfo.stateDict[stateSelect.value]}超过${threshold.value}秒`;
             this.alarmQuerySelector.addOption({value: _v, name: _n, selected: true})
         };
-        row.appendChild(addAlarmBtn);
+        optionsRootNode.appendChild(addAlarmBtn);
 
         emptyEl.appendChild(row);
         emptyEl.appendChild(alarmSelectorNode.rootNode);
@@ -420,6 +441,8 @@ export class AgentMonitorComponent {
             let stateExpr = `{{${state}}}`;
             if(data.value.indexOf(stateExpr) !== -1) {
                 isAlarm = eval(data.value.replace(stateExpr, stateSeconds));
+                // console.log(stateExpr, stateSeconds)
+                // console.log(data.value)
                 // 当匹配成功退出循环，剩余的条件跳过不在一一计算
                 if (isAlarm === true) {
                     return;

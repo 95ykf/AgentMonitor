@@ -32,6 +32,8 @@
     width: 100%;
     /* font-size: 14px; */
     font-size: 13px;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
 }
 .single-line:focus {
     border-color: #1ab394 !important;
