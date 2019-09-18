@@ -17,6 +17,7 @@ class AgentTableRow{
                     onOperateMenuClick = function() {},
                     onCreated = function() {},
                     onUpdatingAgentInfo = function() {return true},
+                    isStartAlarm = function() {return false},
                 }) {
         this.id = `AgentTableRow-${autoIncrementId++}`;
         this.agentInfo = agentInfo;
@@ -33,6 +34,7 @@ class AgentTableRow{
         this.onOperateMenuClick = onOperateMenuClick;
         this.onCreated = onCreated;
         this.onUpdatingAgentInfo = onUpdatingAgentInfo;
+        this.isStartAlarm = isStartAlarm;
 
         this.agentInfo.on('change', this._updateAgentInfoHandler = this.updateAgentInfo.bind(this));
         this.agentInfo.stateTimer.on('change', this._agentStateTimerHandler = this.updateAgentStateTimer.bind(this));
@@ -174,15 +176,40 @@ class AgentTableRow{
     }
 
     /**
-     * 更新坐席状态定时
-     * @param seconds
-     * @param timerValue
+     * 开始告警
+     */
+    startAlarm() {
+        if (!this.rootNode.classList.contains('agent-status-alarm')) {
+            this.rootNode.classList.add('agent-status-alarm');
+        }
+    }
+
+    /**
+     * 停止告警
+     */
+    stopAlarm() {
+        if (this.rootNode.classList.contains('agent-status-alarm')) {
+            this.rootNode.classList.remove('agent-status-alarm');
+        }
+    }
+
+    /**
+     * 更新坐席状态定时和告警，更新前触发onUpdatingAgentInfo事件，事件中返回false将终止update
+     * @param seconds  秒数
+     * @param timerValue  时间字符串
      */
     updateAgentStateTimer(seconds, timerValue) {
         if (!this.onUpdatingAgentInfo(this.agentInfo, this)) {
             return;
         }
         this._stateTimerNode.innerText = timerValue;
+
+        // 是否触发告警
+        if (this.isStartAlarm(this.agentInfo, this)) {
+            this.startAlarm();
+        } else {
+            this.stopAlarm();
+        }
     }
 
     /**

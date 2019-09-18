@@ -34,9 +34,20 @@ export class QuerySelector {
 
         this._title = title;
         this._visible = visible;
-        this._data = data;
+        this._initOptionData = data;
         this._multiple = multiple;
 
+        /**
+         * 选项实际数据
+         * @type {Array}
+         * @private
+         */
+        this._data = [];
+        /**
+         * 缓存选项HTMLElement
+         * @type {Array}
+         * @private
+         */
         this._optionElements = [];
     }
 
@@ -51,18 +62,8 @@ export class QuerySelector {
 
             let optionsRootNode = document.createElement('div');
             optionsRootNode.className = 'options';
-            let optionsNode = document.createElement('ul');
-            this._data.forEach((item, index) => {
-                let listNode = document.createElement('li');
-                if (item.selected) {
-                    listNode.className = 'active';
-                }
-                listNode.innerText = item.name;
-                listNode.onclick = this.optionClick.bind(this, index);
-                optionsNode.appendChild(listNode);
-                this._optionElements.push(listNode);
-            });
-            optionsRootNode.appendChild(optionsNode);
+            optionsRootNode.appendChild(this._optionsNode = document.createElement('ul'));
+            this._initOptionData.forEach(this.addOption.bind(this));
 
             rootNode.appendChild(titleNode);
             rootNode.appendChild(optionsRootNode);
@@ -70,14 +71,35 @@ export class QuerySelector {
         return this;
     }
 
+    /**
+     * 增加一个选项
+     * @param optionData
+     */
+    addOption(optionData) {
+        let listNode = document.createElement('li');
+        if (optionData.selected) {
+            listNode.className = 'active';
+        }
+        listNode.innerText = optionData.name;
+
+        let index = this._data.push(optionData) - 1;
+        listNode.onclick = this.optionClick.bind(this, index);
+
+        this._optionElements.push(listNode);
+        this._optionsNode.appendChild(listNode);
+    }
+
     optionClick(index) {
         let element = this._optionElements[index];
         if (!element.classList.contains('active')) {
+            // 单选时取消所有已选
             if (this._multiple === false) {
                 this.deselectAll();
             }
             this.select(index);
-        } else if (this._multiple === true) {
+        }
+        // 多选时再次点击取消选中
+        else if (this._multiple === true) {
             this.deselect(index);
         }
     }

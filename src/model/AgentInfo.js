@@ -148,7 +148,6 @@ class AgentInfo extends EventEmitter {
 }
 
 // 坐席本地状态常量
-AgentInfo.OFFLINE = 'offline';
 AgentInfo.READY = 'ready';
 AgentInfo.BUSY = 'busy';
 AgentInfo.RESTING = 'resting';
@@ -157,9 +156,9 @@ AgentInfo.TALKING = 'talking';
 AgentInfo.RINGING = 'ringing';
 AgentInfo.DIALING = 'dialing';
 AgentInfo.HOLD = 'hold';
+AgentInfo.OFFLINE = 'offline';
 /* 状态字典 */
 AgentInfo.stateDict = {
-    [AgentInfo.OFFLINE]: '离线',
     [AgentInfo.READY]: '就绪',
     [AgentInfo.BUSY]: '示忙',
     [AgentInfo.RESTING]: '休息',
@@ -168,6 +167,7 @@ AgentInfo.stateDict = {
     [AgentInfo.RINGING]: '振铃',
     [AgentInfo.DIALING]: '呼叫',
     [AgentInfo.HOLD]: '保持',
+    [AgentInfo.OFFLINE]: '离线',
 };
 
 export default AgentInfo;

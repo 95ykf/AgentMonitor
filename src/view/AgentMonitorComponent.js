@@ -4,6 +4,7 @@ import AgentGraph from './AgentGraph';
 import AgentTable from './AgentTable';
 import TabControl from './TabControl';
 import {QuerySelector} from "./QuerySelector";
+import AgentInfo from "../model/AgentInfo";
 
 let autoIncrementId = 0;
 const emptyFunction = function () {};
@@ -48,6 +49,7 @@ export class AgentMonitorComponent {
             queryNode.appendChild(this._generateGroupSelector());
             queryNode.appendChild(this._generateStateSelector());
             queryNode.appendChild(this._generateTypeSelector());
+            queryNode.appendChild(this._generateAlarmSelector());
             rootNode.appendChild(queryNode);
 
             rootNode.appendChild(this._generateAgentStateBar());
@@ -80,9 +82,11 @@ export class AgentMonitorComponent {
         });
         groupSelectorNode.onSelected = (item) => {
             let selectedLength = groupSelectorNode.selectedOptions().length;
-            // 当item是all时不增加监控组标签
-            'all' === item.value || this.addMonitorGroup(item.value);
-            // 点击全选或者除全选外全部被选中时
+            // 当item不是all时增加监控组标签
+            if('all' !== item.value) {
+                this.addMonitorGroup(item.value);
+            }
+            // 除全选外全部被选中或者点击全选时
             if ('all' === item.value || selectedLength === (optionData.length - 1)) {
                 groupSelectorNode.selectAll();
             }
@@ -94,8 +98,10 @@ export class AgentMonitorComponent {
         };
         groupSelectorNode.onDeselected = (item) => {
             let selectedLength = groupSelectorNode.selectedOptions().length;
-            // 当item是all时不删除监控组标签
-            'all' === item.value || this.removeMonitorGroup(item.value);
+            // 当item不是all时删除监控组标签
+            if ('all' !== item.value) {
+                this.removeMonitorGroup(item.value);
+            }
             // 当全选状态时取消一个非全选选项
             if ((selectedLength === optionData.length -1) && 'all' !== item.value) {
                 groupSelectorNode.deselect(0, true);
@@ -127,8 +133,10 @@ export class AgentMonitorComponent {
         });
         stateSelectorNode.onSelected = (item) => {
             let selectedLength = stateSelectorNode.selectedOptions().length;
-            // 当item是all时不增加监控组标签
-            'all' === item.value || this.refreshActiveTab();
+            // 当item不是all时增加监控组标签
+            if('all' !== item.value) {
+                this.refreshActiveTab();
+            }
             // 点击全选或者除全选外全部被选中时
             if ('all' === item.value || selectedLength === (optionData.length - 1)) {
                 stateSelectorNode.selectAll();
@@ -141,8 +149,10 @@ export class AgentMonitorComponent {
         };
         stateSelectorNode.onDeselected = (item) => {
             let selectedLength = stateSelectorNode.selectedOptions().length;
-            // 当item是all时不删除监控组标签
-            'all' === item.value || this.refreshActiveTab();
+            // 当item不是all时删除监控组标签
+            if('all' !== item.value) {
+                this.refreshActiveTab();
+            }
             // 当全选状态时取消一个非全选选项
             if ((selectedLength === optionData.length -1) && 'all' !== item.value) {
                 stateSelectorNode.deselect(0, true);
@@ -173,8 +183,64 @@ export class AgentMonitorComponent {
         typeSelectorNode.onDeselected = (item) => {
             this.tabControls.get(item.value).hide();
         };
+        typeSelectorNode.create();
+
+        // 条件选择器生成后才能生成坐席监控展示区域
         this._generateContent();
-        return typeSelectorNode.create().rootNode;
+
+        return typeSelectorNode.rootNode;
+    }
+
+    /**
+     * 生成告警选择器
+     * @private
+     */
+    _generateAlarmSelector() {
+        let emptyEl = document.createDocumentFragment();
+
+        let optionData = [];
+        let alarmSelectorNode = this.alarmQuerySelector = new QuerySelector({
+            title: '告警条件：',
+            visible: true,
+            data: optionData,
+        });
+        alarmSelectorNode.create();
+
+        let row = document.createElement('div');
+        // 状态
+        let stateSelect = document.createElement('select');
+        for(let stateKey in AgentInfo.stateDict) {
+            let option = document.createElement('option');
+            option.value = stateKey;
+            option.innerHTML = AgentInfo.stateDict[stateKey];
+            stateSelect.appendChild(option);
+        }
+        row.appendChild(stateSelect);
+        row.appendChild(document.createTextNode("大于"));
+        // 阈值
+        let threshold = document.createElement('input');
+        threshold.type = 'text';
+        row.appendChild(threshold);
+        row.appendChild(document.createTextNode("秒"));
+        // 添加按钮
+        let addAlarmBtn = document.createElement('input');
+        addAlarmBtn.type = 'button';
+        addAlarmBtn.value = '添加';
+        addAlarmBtn.onclick = () => {
+            // 状态和阈值必填
+            if (!stateSelect.value || !threshold.value) {
+                return;
+            }
+            let _v = `{{${stateSelect.value}}}>${threshold.value}`;
+            let _n = `${AgentInfo.stateDict[stateSelect.value]}超过${threshold.value}秒`;
+            this.alarmQuerySelector.addOption({value: _v, name: _n, selected: true})
+        };
+        row.appendChild(addAlarmBtn);
+
+        emptyEl.appendChild(row);
+        emptyEl.appendChild(alarmSelectorNode.rootNode);
+
+        return emptyEl;
     }
 
     /**
@@ -194,6 +260,7 @@ export class AgentMonitorComponent {
                 onOperateMenuClick: this.onOperateMenuClick,
                 onCreated: this.createdAgentInfoHandler.bind(this),
                 onUpdatingAgentInfo: this.updatingAgentInfoHandler.bind(this),
+                isStartAlarm: this.isStartAlarm.bind(this),
             });
             this._graphBoxs.set(group.id, agentGraphBox);
             let agentTableBox = new AgentTable({
@@ -203,6 +270,7 @@ export class AgentMonitorComponent {
                 onOperateMenuClick: this.onOperateMenuClick,
                 onCreated: this.createdAgentInfoHandler.bind(this),
                 onUpdatingAgentInfo: this.updatingAgentInfoHandler.bind(this),
+                isStartAlarm: this.isStartAlarm.bind(this),
             });
             this._tableBoxs.set(group.id, agentTableBox);
             graphTabs.add({
@@ -293,26 +361,28 @@ export class AgentMonitorComponent {
         if (selectedOption.value === 'graph') {
             let agentGraphBox = this._graphBoxs.get(id);
             agentGraphBox.graphList.forEach(g => g.refresh());
+            // 刷新tab标签页的内容区
             tabControl.updateContent(id, agentGraphBox.rootNode);
         } else if (selectedOption.value === 'table') {
             let agentTableBox = this._tableBoxs.get(id);
             agentTableBox.rows.forEach(t => t.refresh());
+            // 刷新tab标签页的内容区
             tabControl.updateContent(id, agentTableBox.rootNode);
         }
     }
 
     /**
      * 坐席UI创建完毕后处理
-     * @param component 坐席UI组件
+     * @param component 坐席AgentSingleGraph或AgentTableRow UI组件
      */
     createdAgentInfoHandler(component) {
         let statisticKey = AgentStateBar.getStatisticKey(component.agentInfo.state);
         let isVisible = this.stateQuerySelector.isSelectedByValue(statisticKey);
-        // 判断是否强制显示
+        // 判断是否显示
         if (isVisible && component.isHidden()) {
             component.show();
         }
-        // 判断是否强制隐藏
+        // 判断是否隐藏
         if (!isVisible && !component.isHidden()){
             component.hide();
         }
@@ -322,7 +392,7 @@ export class AgentMonitorComponent {
      * 坐席信息更新事件前的操作，返回false将停止更新
      * @param agentInfo 坐席信息
      * @param component 坐席UI组件
-     * @returns {T|*|boolean}
+     * @returns {boolean}
      */
     updatingAgentInfoHandler(agentInfo, component) {
         let selectedOption = this.typeQuerySelector.selectedOptions()[0];
@@ -333,6 +403,36 @@ export class AgentMonitorComponent {
         )
     }
 
+    /**
+     * 是否触发告警
+     * @param agentInfo 坐席信息
+     * @param component 坐席UI组件
+     * @returns {boolean}
+     */
+    isStartAlarm(agentInfo, component) {
+        let selectedOption = this.typeQuerySelector.selectedOptions()[0];
+
+        let state = agentInfo.state;
+        let stateSeconds = agentInfo.stateTimer.seconds;
+        let isAlarm = false;
+        // 计算告警规则，多个条件按‘或’关系计算
+        this.alarmQuerySelector.selectedOptions().forEach((data) => {
+            let stateExpr = `{{${state}}}`;
+            if(data.value.indexOf(stateExpr) !== -1) {
+                isAlarm = eval(data.value.replace(stateExpr, stateSeconds));
+                // 当匹配成功退出循环，剩余的条件跳过不在一一计算
+                if (isAlarm === true) {
+                    return;
+                }
+            }
+        });
+
+        // 判断是否告警，只有用户可见的才更新DOM
+        return (
+            isAlarm &&
+            this.tabControls.get(selectedOption.value).getActiveContentElement().contains(component.rootNode)
+        )
+    }
 
     destroy() {
         if (this.rootNode && this.rootNode.parentNode) {

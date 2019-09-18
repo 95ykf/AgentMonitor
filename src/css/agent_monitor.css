@@ -466,3 +466,29 @@ ul li.hold .monitor_btns span {
     position: relative;
 }
 
+
+/*告警动画*/
+.agent-status-alarm {
+    -webkit-animation: alarm 1s 2s both infinite;
+    -moz-animation: alarm 1s 2s both infinite;
+    -ms-animation: alarm 1s 2s both infinite;
+    animation: alarm 1s 2s both infinite;
+}
+@keyframes alarm {
+    0% {
+        -moz-box-shadow:0 0 0 #FFC300;
+        -webkit-box-shadow:0 0 0 #FFC300;
+        box-shadow:0 0 0 #FFC300;
+    }
+    50% {
+        -moz-box-shadow:0 0 20px #FFC300;
+        -webkit-box-shadow:0 0 20px #FFC300;
+        box-shadow:0 0 20px #FFC300;
+    }
+    100% {
+        -moz-box-shadow:0 0 0 #FFC300;
+        -webkit-box-shadow:0 0 0 #FFC300;
+        box-shadow:0 0 0 #FFC300;
+    }
+}
+/*浏览器兼容性部分*/

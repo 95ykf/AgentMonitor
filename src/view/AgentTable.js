@@ -18,6 +18,7 @@ class AgentTable extends ContentBox {
                     onOperateMenuClick = function() {},
                     onCreated = function() {},
                     onUpdatingAgentInfo = function() {return true},
+                    isStartAlarm = function() {return false},
                 } = {}) {
 
         super({
@@ -37,6 +38,7 @@ class AgentTable extends ContentBox {
                 onOperateMenuClick,
                 onUpdatingAgentInfo,
                 onCreated,
+                isStartAlarm,
             });
         });
     }
