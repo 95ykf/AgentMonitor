@@ -241,12 +241,8 @@ export class AgentMonitorComponent {
         // 创建状态栏
         let agentStateBar = new AgentStateBar().create();
         this._agentMonitorInfo.on('statisticChange', (beforeState, afterState) => {
-            let beforeKey = AgentStateBar.getStatisticKey(beforeState);
-            let afterKey = AgentStateBar.getStatisticKey(afterState);
-            let beforeAgentStates = AgentStateBar.getAgentStateByStatisticKey(beforeKey);
-            let afterAgentStates = AgentStateBar.getAgentStateByStatisticKey(afterKey);
-            agentStateBar.updateStateTotal(beforeKey, this._agentMonitorInfo.countByState(beforeAgentStates));
-            agentStateBar.updateStateTotal(afterKey, this._agentMonitorInfo.countByState(afterAgentStates));
+            agentStateBar.updateStateTotal(beforeState, this._agentMonitorInfo.getStateCount(beforeState));
+            agentStateBar.updateStateTotal(afterState, this._agentMonitorInfo.getStateCount(afterState));
         });
         agentStateBar.updateStateTotal('total', this._agents.size);
         agentStateBar.updateStateTotal('offline', this._agents.size);
@@ -306,8 +302,7 @@ export class AgentMonitorComponent {
      * @param component 坐席UI组件
      */
     createdAgentInfoHandler(component) {
-        let statisticKey = AgentStateBar.getStatisticKey(component.agentInfo.state);
-        let isVisible = this.stateQuerySelector.isSelectedByValue(statisticKey);
+        let isVisible = this.stateQuerySelector.isSelectedByValue(component.agentInfo.state);
         // 判断是否强制显示
         if (isVisible && component.isHidden()) {
             component.show();

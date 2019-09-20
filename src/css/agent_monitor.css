@@ -322,21 +322,15 @@ ul li.ready .monitor_btns span {
 }
 
 /* 未就绪 */
-ul li.busy,
-ul li.resting,
-ul li.neatening {
+ul li.not_ready {
     background: #ffb44b
 }
 
-ul li.busy .job-number,
-ul li.resting .job-number,
-ul li.neatening .job-number {
+ul li.not_ready .job-number {
     color: #ffb44b
 }
 
-ul li.busy .monitor_btns span,
-ul li.resting .monitor_btns span,
-ul li.neatening .monitor_btns span {
+ul li.not_ready {
     background: #e49931;
 }
 
@@ -444,9 +438,7 @@ ul li.hold .monitor_btns span {
 .ready-row .agentstate {
     color: #1ab394;
 }
-.busy-row .agentstate,
-.resting-row .agentstate,
-.neatening-row .agentstate {
+.not_ready-row .agentstate {
     color: #f8ac59;
 }
 .talking-row .agentstate {

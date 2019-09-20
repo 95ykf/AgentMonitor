@@ -1,5 +1,5 @@
 import EventEmitter from 'eventemitter3';
-import {AgentState, NotReadyReason, CallType} from "../constants";
+import {AgentState, NotReadyReason, CallType, PartyState} from "../constants";
 import Timer from "./Timer";
 
 /**
@@ -87,7 +87,11 @@ class AgentInfo extends EventEmitter {
      * @returns {*}
      */
     getCurrentStateName() {
-        return AgentInfo.stateDict[this.state] || '';
+        let state = this.state;
+        if (this.state === AgentInfo.NOT_READY) {
+            state = AgentInfo.convertNotReadyReason(this.reasonCode);
+        }
+        return (AgentInfo.stateDict[state] ?  AgentInfo.stateDict[state] : '');
     }
 
     /**
@@ -95,27 +99,16 @@ class AgentInfo extends EventEmitter {
      *
      * @param rawState
      * @param reason  0 整理；1 通话；2 话机不可用；3 示忙；4 离开；5 休息；
+     * @param partState 通话状态
      * @returns {string}
      */
     static convertToLocalState(rawState, reason, partState) {
         let state = AgentInfo.OFFLINE;
         if (rawState === AgentState.NOTREADY) {
-            switch (reason) {
-                case NotReadyReason.NEATENING:
-                    state = AgentInfo.NEATENING;
-                    break;
-                case NotReadyReason.TALKING:
-                    state = AgentInfo.convertPartState(partState);
-                    break;
-                case NotReadyReason.BUSY:
-                    state = AgentInfo.BUSY;
-                    break;
-                case NotReadyReason.RESTING:
-                    state = AgentInfo.RESTING;
-                    break;
-                default:
-                    state = AgentInfo.BUSY;
-                    break;
+            if (reason === NotReadyReason.TALKING) {
+                state = AgentInfo.convertPartState(partState);
+            } else {
+                state = AgentInfo.NOT_READY;
             }
         } else if (rawState === AgentState.READY) {
             state = AgentInfo.READY;
@@ -125,49 +118,91 @@ class AgentInfo extends EventEmitter {
         return state;
     }
 
+    /**
+     * 通话状态转换
+     * @param partState 2 呼叫 3 振铃 4 通话 5 保持
+     * @returns {string}
+     */
     static convertPartState(partState) {
         let state = AgentInfo.TALKING;
-
-        switch (partState) {
-            case 2:
-                state = AgentInfo.DIALING;
-                break;
-            case 3:
-                state = AgentInfo.RINGING;
-                break;
-            case 4:
-                state = AgentInfo.TALKING;
-                break;
-            case 5:
-                state = AgentInfo.HOLD;
-                break;
+        // 呼叫
+        if (partState === PartyState.DIALING) {
+            state = AgentInfo.DIALING;
         }
-
+        // 振铃
+        else if (partState === PartyState.RINGING) {
+            state = AgentInfo.RINGING;
+        }
+        // 通话
+        else if (partState === PartyState.TALK) {
+            state = AgentInfo.TALKING;
+        }
+        // 保持
+        else if (partState === PartyState.HOLD) {
+            state = AgentInfo.HOLD;
+        }
         return state;
+    }
+
+    /**
+     * 获取未就绪状态内部key，如果不存在默认返回示忙
+     * @param reason
+     * @returns {*}
+     */
+    static convertNotReadyReason(reason) {
+        let notReadyState = AgentInfo.reasonCodeMap[reason];
+        if (!notReadyState) {
+            notReadyState = AgentInfo.reasonCodeMap[NotReadyReason.BUSY];
+        }
+        return notReadyState;
+    }
+
+    /**
+     * 设置自定义未就绪状态码
+     * @param notReadyReason
+     */
+    static setCustomNotReadyReason(notReadyReason) {
+        for (let reason of notReadyReason) {
+            let _notReadyStateKey = AgentInfo.reasonCodeMap[reason.code];
+            // 如果存在删除此字典
+            if (_notReadyStateKey) {
+                delete AgentInfo.stateDict[_notReadyStateKey];
+            }
+
+            AgentInfo.reasonCodeMap[reason.code] = reason.key;
+            AgentInfo.stateDict[reason.key] = reason.name;
+        }
     }
 }
 
 // 坐席本地状态常量
 AgentInfo.OFFLINE = 'offline';
 AgentInfo.READY = 'ready';
-AgentInfo.BUSY = 'busy';
-AgentInfo.RESTING = 'resting';
-AgentInfo.NEATENING = 'neatening';
+AgentInfo.NOT_READY = 'not_ready';
 AgentInfo.TALKING = 'talking';
 AgentInfo.RINGING = 'ringing';
 AgentInfo.DIALING = 'dialing';
 AgentInfo.HOLD = 'hold';
-/* 状态字典 */
+// 未就绪状态
+AgentInfo.NOT_READY_BUSY = 'busy';
+AgentInfo.NOT_READY_RESTING = 'resting';
+AgentInfo.NOT_READY_NEATENING = 'neatening';
+/* 状态字典，未就绪有多个动态自字段，翻译由用户自由扩展 */
 AgentInfo.stateDict = {
     [AgentInfo.OFFLINE]: '离线',
     [AgentInfo.READY]: '就绪',
-    [AgentInfo.BUSY]: '示忙',
-    [AgentInfo.RESTING]: '休息',
-    [AgentInfo.NEATENING]: '整理',
+    [AgentInfo.NOT_READY_BUSY]: '示忙',
+    [AgentInfo.NOT_READY_RESTING]: '休息',
+    [AgentInfo.NOT_READY_NEATENING]: '整理',
     [AgentInfo.TALKING]: '通话',
     [AgentInfo.RINGING]: '振铃',
     [AgentInfo.DIALING]: '呼叫',
     [AgentInfo.HOLD]: '保持',
+};
+AgentInfo.reasonCodeMap = {
+    [NotReadyReason.BUSY]: AgentInfo.NOT_READY_BUSY,
+    [NotReadyReason.RESTING]: AgentInfo.NOT_READY_RESTING,
+    [NotReadyReason.NEATENING]: AgentInfo.NOT_READY_NEATENING,
 };
 
 export default AgentInfo;
