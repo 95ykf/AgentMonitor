@@ -1,36 +1,36 @@
 /**
  * 多条件查询选中器
  */
-export class QuerySelector {
+export class AlarmSelector {
     constructor({
-                    title = '',
-                    visible = true,
-                    data = [],
-                    multiple = true,
-                }) {
+        title = '',
+        visible = true,
+        data = [],
+        multiple = true,
+    }) {
         /**
          * 将要选中选项时的事件，可自定义该方法
          * @param option {Object} 将要被选中的选项配置
          * @returns {boolean} 若返回false可阻止选中选项
          */
-        this.onSelecting = function (option) {return true};
+        this.onSelecting = function (option) { return true };
 
         /**
          * 选中选项时的事件，可自定义该方法
          */
-        this.onSelected = function () {};
+        this.onSelected = function () { };
 
         /**
          * 将要取消选中选项时的事件，可自定义该方法
          * @param option {Object} 将要被取消选中的选项配置
          * @returns {boolean} 若返回false可阻止取消选中选项
          */
-        this.onDeselecting = function (option) {return true};
+        this.onDeselecting = function (option) { return true };
 
         /**
          * 取消选中选项时的事件，可自定义该方法
          */
-        this.onDeselected = function () {};
+        this.onDeselected = function () { };
 
         this._title = title;
         this._visible = visible;
@@ -64,7 +64,13 @@ export class QuerySelector {
             optionsRootNode.className = 'options';
             optionsRootNode.appendChild(this._optionsNode = document.createElement('ul'));
 
-            this._initOptionData.forEach(this.addOption.bind(this));
+            let localData = JSON.parse(localStorage.getItem('optionDatas'));
+
+            if (localData !== null) {
+                localData.forEach(this.addOption.bind(this));
+            } else {
+                this._initOptionData.forEach(this.addOption.bind(this));
+            }
 
             rootNode.appendChild(titleNode);
             rootNode.appendChild(optionsRootNode);
@@ -81,13 +87,93 @@ export class QuerySelector {
         if (optionData.selected) {
             listNode.className = 'active';
         };
+        listNode.id = this.alarmState(optionData);
         listNode.innerText = optionData.name;
 
-        let index = this._data.push(optionData) - 1;
-        listNode.onclick = this.optionClick.bind(this, index);
+        let localData = localStorage.getItem('optionDatas');
+        // 判断是否从未监控过
+        if (localData === null) {
+            this._data.push(optionData);
+            this._optionElements.push(listNode);
+            this._optionsNode.appendChild(listNode);
+            listNode.onclick = this.optionClick.bind(this, this._data.length - 1);
+            localStorage.setItem('optionDatas', JSON.stringify(this._data));
+        } else {
+            // 获取当前数据状态，与循环中的数据进行比对
+            let nowSts = this.alarmState(optionData);
+            let nowTime = this.alarmTime(optionData);
+            let tempData = this._data;
+            let stsData = [];
+            for (let i = 0; i < this._data.length; i++) {
+                let forSts = this.alarmState(this._data[i]);
+                stsData.push(forSts);
+            }
+            let indexVal = stsData.indexOf(nowSts);
+            // 判断告警状态与之前状态是否相同
+            if (indexVal != -1) {
+                let tempOption = this._data[indexVal];
+                let tempTime = this.alarmTime(tempOption);
+                // 判断状态相同时，告警时间是否相同
+                if (tempTime == nowTime) {
+                    return;
+                } else {
+                    tempData.splice(indexVal, 1);
+                    tempData.push(optionData);
+                    this._optionElements.splice(indexVal, 1);
+                    this._optionElements.push(listNode);
+                    this._optionsNode.removeChild(document.getElementById(nowSts));
+                    this._optionsNode.appendChild(listNode);
+                    listNode.onclick = this.optionClick.bind(this, tempData.length - 1);
+                }
+            } else {
+                tempData.push(optionData);
+                this._optionElements.push(listNode);
+                this._optionsNode.appendChild(listNode);
+                listNode.onclick = this.optionClick.bind(this, tempData.length - 1);
+            }
+            this._data = tempData;
+            localStorage.setItem('optionDatas', JSON.stringify(this._data));
+        };
+    }
 
-        this._optionElements.push(listNode);
-        this._optionsNode.appendChild(listNode);
+    /**
+     * 获取告警状态
+     * @param v
+     */
+    alarmState(v) {
+        let _value = v.value;
+        let value_state = _value.substring(_value.lastIndexOf('{') + 1, _value.lastIndexOf('}') - 1);
+        return value_state.toLocaleLowerCase()
+    }
+
+    /**
+     * 获取告警时间
+     * @param v
+     */
+    alarmTime(v) {
+        let _value = v.value;
+        let time = _value.substring(_value.lastIndexOf('>') + 1)
+        return time
+    }
+
+
+    exists(data, optionData) {
+        let status = alarmState(optionData);
+        let flag = false;
+        for (let i = 0; i < data.length; i++) {
+            if (alarmState(data[i]) === status) {
+                flag = true;
+                if (JSON.stringify(data[i]) !== JSON.stringify(optionData)) {
+                    data[i] = optionData;
+                    localStorage.setItem('optionDatas', JSON.stringify(data));
+                    break;
+                }
+            }
+        }
+        if (!flag) {
+            data.push(optionData);
+            localStorage.setItem('optionDatas', JSON.stringify(data));
+        }
     }
 
     optionClick(index) {

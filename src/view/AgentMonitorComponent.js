@@ -4,6 +4,7 @@ import AgentGraph from './AgentGraph';
 import AgentTable from './AgentTable';
 import TabControl from './TabControl';
 import {QuerySelector} from "./QuerySelector";
+import {AlarmSelector} from "./AlarmSelector";
 import AgentInfo from "../model/AgentInfo";
 
 let autoIncrementId = 0;
@@ -199,11 +200,10 @@ export class AgentMonitorComponent {
         let emptyEl = document.createDocumentFragment();
 
         let optionData = [];
-        let alarmSelectorNode = this.alarmQuerySelector = new QuerySelector({
+        let alarmSelectorNode = this.alarmQuerySelector = new AlarmSelector({
             title: '告警条件：',
             visible: true,
             data: optionData,
-            alarm: true,
         });
         alarmSelectorNode.create();
 
