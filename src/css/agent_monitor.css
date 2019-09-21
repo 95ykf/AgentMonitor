@@ -491,10 +491,10 @@ ul li.hold .monitor_btns span {
 
 /*告警动画*/
 .agent-status-alarm {
-    -webkit-animation: alarm 1s 2s both infinite;
-    -moz-animation: alarm 1s 2s both infinite;
-    -ms-animation: alarm 1s 2s both infinite;
-    animation: alarm 1s 2s both infinite;
+    -webkit-animation: alarm 1.2s ease 0s  infinite;
+    -moz-animation: alarm 1.2s ease 0s  infinite;
+    -ms-animation: alarm 1.2s ease 0s  infinite;
+    animation: alarm 1.2s ease 0s  infinite;
 }
 @keyframes alarm {
     0% {

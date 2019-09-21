@@ -203,13 +203,14 @@ export class AgentMonitorComponent {
             title: '告警条件：',
             visible: true,
             data: optionData,
+            alarm: true,
         });
         alarmSelectorNode.create();
 
         let row = document.createElement('div');
         let titleNode = document.createElement('div');
         titleNode.className = 'option_title';
-        titleNode.innerText = '超时告警:';
+        titleNode.innerText = '超时告警：';
 
         let optionsRootNode = document.createElement('div');
         optionsRootNode.className = 'alarm-control-tool';
@@ -222,9 +223,11 @@ export class AgentMonitorComponent {
         stateSelect.className = 'pull-left single-line';
         for(let stateKey in AgentInfo.stateDict) {
             let option = document.createElement('option');
-            option.value = stateKey;
-            option.innerHTML = AgentInfo.stateDict[stateKey];
-            stateSelect.appendChild(option);
+            if (stateKey.toLocaleLowerCase() == 'busy' || stateKey == 'resting' || stateKey == 'neatening' || stateKey == 'talking') {
+                option.value = stateKey;
+                option.innerHTML = AgentInfo.stateDict[stateKey];
+                stateSelect.appendChild(option);
+            }
         }
         optionsRootNode.appendChild(stateSelect);
         
@@ -235,7 +238,7 @@ export class AgentMonitorComponent {
         // 阈值
         let threshold = document.createElement('input');
         threshold.className = 'pull-left single-line'
-        threshold.type = 'text';
+        threshold.type = 'number';
         optionsRootNode.appendChild(threshold);
 
         let oSpanright = document.createElement('span');
@@ -253,7 +256,7 @@ export class AgentMonitorComponent {
                 return;
             }
             let _v = `{{${stateSelect.value}}}>${threshold.value}`;
-            let _n = `${AgentInfo.stateDict[stateSelect.value]}超过${threshold.value}秒`;
+            let _n = `${AgentInfo.stateDict[stateSelect.value]}超过 ${threshold.value} 秒`;
             this.alarmQuerySelector.addOption({value: _v, name: _n, selected: true})
         };
         optionsRootNode.appendChild(addAlarmBtn);
@@ -438,6 +441,7 @@ export class AgentMonitorComponent {
         let isAlarm = false;
         // 计算告警规则，多个条件按‘或’关系计算
         this.alarmQuerySelector.selectedOptions().forEach((data) => {
+            // console.log('-----',data)
             let stateExpr = `{{${state}}}`;
             if(data.value.indexOf(stateExpr) !== -1) {
                 isAlarm = eval(data.value.replace(stateExpr, stateSeconds));

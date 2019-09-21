@@ -7,6 +7,7 @@ export class QuerySelector {
                     visible = true,
                     data = [],
                     multiple = true,
+                    alarm = false,
                 }) {
         /**
          * 将要选中选项时的事件，可自定义该方法
@@ -36,6 +37,7 @@ export class QuerySelector {
         this._visible = visible;
         this._initOptionData = data;
         this._multiple = multiple;
+        this._alarm = alarm;
 
         /**
          * 选项实际数据
@@ -63,7 +65,14 @@ export class QuerySelector {
             let optionsRootNode = document.createElement('div');
             optionsRootNode.className = 'options';
             optionsRootNode.appendChild(this._optionsNode = document.createElement('ul'));
-            this._initOptionData.forEach(this.addOption.bind(this));
+
+            let localData = JSON.parse(localStorage.getItem('optionDatas'));
+
+            if (this._alarm === true && initOptionData !== null) {
+                localData.forEach(this.addOption.bind(this));
+            } else {
+                this._initOptionData.forEach(this.addOption.bind(this));
+            }
 
             rootNode.appendChild(titleNode);
             rootNode.appendChild(optionsRootNode);
@@ -76,17 +85,68 @@ export class QuerySelector {
      * @param optionData
      */
     addOption(optionData) {
+        for (let item of this._data) {
+            if (this.alarmState(item) == this.alarmState(optionData) && this.alarmTime(item) == this.alarmTime(optionData)) {
+                return
+            }
+        };
+
+      
         let listNode = document.createElement('li');
         if (optionData.selected) {
             listNode.className = 'active';
-        }
+        };
         listNode.innerText = optionData.name;
 
         let index = this._data.push(optionData) - 1;
         listNode.onclick = this.optionClick.bind(this, index);
 
+        if (this._alarm === true) {
+            localStorage.setItem('optionDatas',JSON.stringify(this._data));
+
+        }
         this._optionElements.push(listNode);
         this._optionsNode.appendChild(listNode);
+    }
+
+    /**
+     * 获取告警状态
+     * @param v
+     */
+    alarmState(v) {
+        let _value = v.value;
+        let value_state = _value.substring(_value.lastIndexOf('{')+1,_value.lastIndexOf('}')-1);
+        return value_state.toLocaleLowerCase() 
+    }
+
+    /**
+     * 获取告警时间
+     * @param v
+     */
+    alarmTime(v) {
+        let _value = v.value;
+        let time = _value.substring(_value.lastIndexOf('>')+1)
+        return time
+    }
+
+    
+    exists(data, optionData) {
+        let status = alarmState(optionData);
+        let flag = false;
+        for (let i = 0; i < data.length; i++) {
+            if (alarmState(data[i]) === status) {
+                flag = true;
+                if (JSON.stringify(data[i]) !== JSON.stringify(optionData)) {
+                    data[i] = optionData;
+                    localStorage.setItem('optionDatas', JSON.stringify(data));
+                    break;
+                }
+            }
+        }
+        if (!flag) {
+            data.push(optionData);
+            localStorage.setItem('optionDatas', JSON.stringify(data));
+        }
     }
 
     optionClick(index) {
