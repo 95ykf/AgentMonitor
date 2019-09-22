@@ -93,10 +93,7 @@ export class AlarmSelector {
         let localData = localStorage.getItem('optionDatas');
         // 判断是否从未监控过
         if (localData === null) {
-            this._data.push(optionData);
-            this._optionElements.push(listNode);
-            this._optionsNode.appendChild(listNode);
-            listNode.onclick = this.optionClick.bind(this, this._data.length - 1);
+            this.addNode(this._data,optionData,listNode);
             localStorage.setItem('optionDatas', JSON.stringify(this._data));
         } else {
             // 获取当前数据状态，与循环中的数据进行比对
@@ -107,33 +104,42 @@ export class AlarmSelector {
             for (let i = 0; i < this._data.length; i++) {
                 let forSts = this.alarmState(this._data[i]);
                 stsData.push(forSts);
-            }
+            };
             let indexVal = stsData.indexOf(nowSts);
             // 判断告警状态与之前状态是否相同
             if (indexVal != -1) {
                 let tempOption = this._data[indexVal];
                 let tempTime = this.alarmTime(tempOption);
+                let tempState = this.alarmState(tempOption);
                 // 判断状态相同时，告警时间是否相同
                 if (tempTime == nowTime) {
                     return;
                 } else {
-                    tempData.splice(indexVal, 1);
-                    tempData.push(optionData);
-                    this._optionElements.splice(indexVal, 1);
-                    this._optionElements.push(listNode);
-                    this._optionsNode.removeChild(document.getElementById(nowSts));
-                    this._optionsNode.appendChild(listNode);
-                    listNode.onclick = this.optionClick.bind(this, tempData.length - 1);
-                }
+                    let tip = confirm(`${this.toState(tempState)} 告警状态已经存在，确定要替换吗？`);
+                    if (tip == true) {
+                        tempData[indexVal] = optionData
+                        this._optionElements[indexVal] = listNode;
+
+                        let oldNode = this._optionsNode.children[indexVal];
+                        this._optionsNode.replaceChild(listNode,oldNode);
+                        listNode.onclick = this.optionClick.bind(this, indexVal);
+                    } else {
+                        return;
+                    }
+                };
             } else {
-                tempData.push(optionData);
-                this._optionElements.push(listNode);
-                this._optionsNode.appendChild(listNode);
-                listNode.onclick = this.optionClick.bind(this, tempData.length - 1);
-            }
+                this.addNode(tempData,optionData,listNode);
+            };
             this._data = tempData;
             localStorage.setItem('optionDatas', JSON.stringify(this._data));
         };
+    }
+
+    addNode(totalData,optionData,listNode) {
+        totalData.push(optionData);
+        this._optionElements.push(listNode);
+        this._optionsNode.appendChild(listNode);
+        listNode.onclick = this.optionClick.bind(this, totalData.length - 1);
     }
 
     /**
@@ -157,22 +163,19 @@ export class AlarmSelector {
     }
 
 
-    exists(data, optionData) {
-        let status = alarmState(optionData);
-        let flag = false;
-        for (let i = 0; i < data.length; i++) {
-            if (alarmState(data[i]) === status) {
-                flag = true;
-                if (JSON.stringify(data[i]) !== JSON.stringify(optionData)) {
-                    data[i] = optionData;
-                    localStorage.setItem('optionDatas', JSON.stringify(data));
-                    break;
-                }
-            }
-        }
-        if (!flag) {
-            data.push(optionData);
-            localStorage.setItem('optionDatas', JSON.stringify(data));
+    toState(state) {
+        switch (state) {
+            case 'busy':
+                return '示忙'
+
+            case 'resting':
+                return '休息'
+
+            case 'neatening':
+                return '整理'
+
+            case 'talking':
+                return '通话'
         }
     }
 
