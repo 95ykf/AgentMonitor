@@ -138,7 +138,7 @@ class AgentInfo extends EventEmitter {
             state = AgentInfo.TALKING;
         }
         // 保持
-        else if (partState === PartyState.HOLD) {
+        else if (partState === PartyState.HELD) {
             state = AgentInfo.HOLD;
         }
         return state;
