@@ -15,11 +15,19 @@ class AgentMonitorInfo extends EventEmitter {
     }
 
     /**
-     * 根据状态获取该状态的坐席数
-     * @param states
+     * 获取状态的坐席数
+     * @param state
+     */
+    getStateCount(state) {
+        return this.stateMap.get(state) ? this.stateMap.get(state).length : 0
+    }
+
+    /**
+     * 根据状态数组获取状态的坐席总数
+     * @param {Array} states 状态数组
      * @returns {number}
      */
-    countByState(states) {
+    countByStates(states) {
         let count = 0;
         states.forEach((state) => {
             count += (this.stateMap.get(state) ? this.stateMap.get(state).length : 0);

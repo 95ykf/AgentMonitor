@@ -86,32 +86,6 @@ class AgentStateBar extends ContentBox {
             }
         });
     }
-
-    /**
-     * 根据状态统计key获取坐席状态值。
-     * @param key
-     * @returns {Array}
-     */
-    static getAgentStateByStatisticKey(key) {
-        let state = [key];
-        if (key === 'not_ready') {
-            state = [AgentInfo.BUSY, AgentInfo.RESTING, AgentInfo.NEATENING];
-        }
-        return state;
-    }
-
-    /**
-     * 获取状态统计key
-     * @param state
-     * @returns {string}
-     */
-    static getStatisticKey(state) {
-        let key = state;
-        if (state === AgentInfo.BUSY || state === AgentInfo.RESTING || state === AgentInfo.NEATENING) {
-            key = 'not_ready';
-        }
-        return key;
-    }
 }
 
 export default AgentStateBar;

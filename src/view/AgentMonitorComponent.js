@@ -214,7 +214,7 @@ export class AgentMonitorComponent {
 
         let optionsRootNode = document.createElement('div');
         optionsRootNode.className = 'alarm-control-tool';
-        
+
         row.appendChild(titleNode);
         row.appendChild(optionsRootNode);
 
@@ -230,7 +230,7 @@ export class AgentMonitorComponent {
             }
         }
         optionsRootNode.appendChild(stateSelect);
-        
+
         let oSpanLeft = document.createElement('span');
         oSpanLeft.className = 'pull-left';
         oSpanLeft.innerText = '大于'
@@ -333,12 +333,8 @@ export class AgentMonitorComponent {
         // 创建状态栏
         let agentStateBar = new AgentStateBar().create();
         this._agentMonitorInfo.on('statisticChange', (beforeState, afterState) => {
-            let beforeKey = AgentStateBar.getStatisticKey(beforeState);
-            let afterKey = AgentStateBar.getStatisticKey(afterState);
-            let beforeAgentStates = AgentStateBar.getAgentStateByStatisticKey(beforeKey);
-            let afterAgentStates = AgentStateBar.getAgentStateByStatisticKey(afterKey);
-            agentStateBar.updateStateTotal(beforeKey, this._agentMonitorInfo.countByState(beforeAgentStates));
-            agentStateBar.updateStateTotal(afterKey, this._agentMonitorInfo.countByState(afterAgentStates));
+            agentStateBar.updateStateTotal(beforeState, this._agentMonitorInfo.getStateCount(beforeState));
+            agentStateBar.updateStateTotal(afterState, this._agentMonitorInfo.getStateCount(afterState));
         });
         agentStateBar.updateStateTotal('total', this._agents.size);
         agentStateBar.updateStateTotal('offline', this._agents.size);
@@ -400,13 +396,12 @@ export class AgentMonitorComponent {
      * @param component 坐席AgentSingleGraph或AgentTableRow UI组件
      */
     createdAgentInfoHandler(component) {
-        let statisticKey = AgentStateBar.getStatisticKey(component.agentInfo.state);
-        let isVisible = this.stateQuerySelector.isSelectedByValue(statisticKey);
-        // 判断是否显示
+        let isVisible = this.stateQuerySelector.isSelectedByValue(component.agentInfo.state);
+        // 判断是否强制显示
         if (isVisible && component.isHidden()) {
             component.show();
         }
-        // 判断是否隐藏
+        // 判断是否强制隐藏
         if (!isVisible && !component.isHidden()){
             component.hide();
         }

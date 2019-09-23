@@ -33,6 +33,8 @@ class AgentMonitor {
                     agentID,
 
                     timeOffset = 0,
+
+                    customNotReadyReason = [],
                 }) {
         this._renderTo = renderTo;
         this._phoneBarExists = false;
@@ -52,6 +54,8 @@ class AgentMonitor {
          * 服务器与本地时间偏移量，单位毫秒
          */
         this._timeOffset = timeOffset;
+
+        AgentInfo.setCustomNotReadyReason(customNotReadyReason);
     }
 
     /**
