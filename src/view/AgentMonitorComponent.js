@@ -222,7 +222,9 @@ export class AgentMonitorComponent {
         let stateSelect = document.createElement('select');
         stateSelect.className = 'pull-left single-line';
         for(let stateKey in AgentInfo.stateDict) {
-            if (stateKey !== AgentInfo.OFFLINE && stateKey !== AgentInfo.READY) {
+            if (stateKey !== AgentInfo.OFFLINE && stateKey !== AgentInfo.READY &&
+                stateKey !== AgentInfo.RINGING && stateKey !== AgentInfo.DIALING &&
+                stateKey !== AgentInfo.HOLD) {
                 let option = document.createElement('option');
                 option.value = stateKey;
                 option.innerHTML = AgentInfo.stateDict[stateKey];
