@@ -498,19 +498,19 @@ ul li.hold .monitor_btns span {
 }
 @keyframes alarm {
     0% {
-        -moz-box-shadow:0 0 0 #FFC300;
-        -webkit-box-shadow:0 0 0 #FFC300;
-        box-shadow:0 0 0 #FFC300;
+        -moz-box-shadow:0 0 0 #fd1d1d;
+        -webkit-box-shadow:0 0 0 #fd1d1d;
+        box-shadow:0 0 0 #fd1d1d;
     }
     50% {
-        -moz-box-shadow:0 0 20px #FFC300;
-        -webkit-box-shadow:0 0 20px #FFC300;
-        box-shadow:0 0 20px #FFC300;
+        -moz-box-shadow:0 0 20px #fd1d1d;
+        -webkit-box-shadow:0 0 20px #fd1d1d;
+        box-shadow:0 0 20px #fd1d1d;
     }
     100% {
-        -moz-box-shadow:0 0 0 #FFC300;
-        -webkit-box-shadow:0 0 0 #FFC300;
-        box-shadow:0 0 0 #FFC300;
+        -moz-box-shadow:0 0 0 #fd1d1d;
+        -webkit-box-shadow:0 0 0 #fd1d1d;
+        box-shadow:0 0 0 #fd1d1d;
     }
 }
 /*浏览器兼容性部分*/
