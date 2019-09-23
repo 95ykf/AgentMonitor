@@ -1,3 +1,5 @@
+import AgentInfo from "../model/AgentInfo";
+
 /**
  * 多条件查询选中器
  */
@@ -115,7 +117,7 @@ export class AlarmSelector {
                 if (tempTime == nowTime) {
                     return;
                 } else {
-                    let tip = confirm(`${this.toState(tempState)} 告警状态已经存在，确定要替换吗？`);
+                    let tip = confirm(`${AgentInfo.stateDict[tempState]} 告警状态已经存在，确定要替换吗？`);
                     if (tip == true) {
                         tempData[indexVal] = optionData
                         this._optionElements[indexVal] = listNode;
@@ -160,23 +162,6 @@ export class AlarmSelector {
         let _value = v.value;
         let time = _value.substring(_value.lastIndexOf('>') + 1)
         return time
-    }
-
-
-    toState(state) {
-        switch (state) {
-            case 'busy':
-                return '示忙'
-
-            case 'resting':
-                return '休息'
-
-            case 'neatening':
-                return '整理'
-
-            case 'talking':
-                return '通话'
-        }
     }
 
     optionClick(index) {

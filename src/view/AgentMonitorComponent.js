@@ -222,8 +222,8 @@ export class AgentMonitorComponent {
         let stateSelect = document.createElement('select');
         stateSelect.className = 'pull-left single-line';
         for(let stateKey in AgentInfo.stateDict) {
-            let option = document.createElement('option');
-            if (stateKey.toLocaleLowerCase() == 'busy' || stateKey == 'resting' || stateKey == 'neatening' || stateKey == 'talking') {
+            if (stateKey !== AgentInfo.OFFLINE && stateKey !== AgentInfo.READY) {
+                let option = document.createElement('option');
                 option.value = stateKey;
                 option.innerHTML = AgentInfo.stateDict[stateKey];
                 stateSelect.appendChild(option);
@@ -429,9 +429,10 @@ export class AgentMonitorComponent {
      * @returns {boolean}
      */
     isStartAlarm(agentInfo, component) {
-        let selectedOption = this.typeQuerySelector.selectedOptions()[0];
-
         let state = agentInfo.state;
+        if (agentInfo.state === AgentInfo.NOT_READY) {
+            state = AgentInfo.convertNotReadyReason(agentInfo.reasonCode);
+        }
         let stateSeconds = agentInfo.stateTimer.seconds;
         let isAlarm = false;
         // 计算告警规则，多个条件按‘或’关系计算
@@ -450,6 +451,7 @@ export class AgentMonitorComponent {
         });
 
         // 判断是否告警，只有用户可见的才更新DOM
+        let selectedOption = this.typeQuerySelector.selectedOptions()[0];
         return (
             isAlarm &&
             this.tabControls.get(selectedOption.value).getActiveContentElement().contains(component.rootNode)

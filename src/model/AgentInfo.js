@@ -150,9 +150,9 @@ class AgentInfo extends EventEmitter {
      * @returns {*}
      */
     static convertNotReadyReason(reason) {
-        let notReadyState = AgentInfo.reasonCodeMap[reason];
+        let notReadyState = AgentInfo.reasonCodeMapping[reason];
         if (!notReadyState) {
-            notReadyState = AgentInfo.reasonCodeMap[NotReadyReason.BUSY];
+            notReadyState = AgentInfo.reasonCodeMapping[NotReadyReason.BUSY];
         }
         return notReadyState;
     }
@@ -163,13 +163,13 @@ class AgentInfo extends EventEmitter {
      */
     static setCustomNotReadyReason(notReadyReason) {
         for (let reason of notReadyReason) {
-            let _notReadyStateKey = AgentInfo.reasonCodeMap[reason.code];
+            let _notReadyStateKey = AgentInfo.reasonCodeMapping[reason.code];
             // 如果存在删除此字典
             if (_notReadyStateKey) {
                 delete AgentInfo.stateDict[_notReadyStateKey];
             }
 
-            AgentInfo.reasonCodeMap[reason.code] = reason.key;
+            AgentInfo.reasonCodeMapping[reason.code] = reason.key;
             AgentInfo.stateDict[reason.key] = reason.name;
         }
     }
@@ -199,7 +199,7 @@ AgentInfo.stateDict = {
     [AgentInfo.HOLD]: '保持',
     [AgentInfo.OFFLINE]: '离线',
 };
-AgentInfo.reasonCodeMap = {
+AgentInfo.reasonCodeMapping = {
     [NotReadyReason.BUSY]: AgentInfo.NOT_READY_BUSY,
     [NotReadyReason.RESTING]: AgentInfo.NOT_READY_RESTING,
     [NotReadyReason.NEATENING]: AgentInfo.NOT_READY_NEATENING,
