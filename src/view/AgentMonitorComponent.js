@@ -6,6 +6,7 @@ import TabControl from './TabControl';
 import {QuerySelector} from "./QuerySelector";
 import {AlarmSelector} from "./AlarmSelector";
 import AgentInfo from "../model/AgentInfo";
+import { Array } from 'core-js';
 
 let autoIncrementId = 0;
 const emptyFunction = function () {};
@@ -33,7 +34,8 @@ export class AgentMonitorComponent {
         this._graphBoxs = new Map();
         this._tableBoxs = new Map();
         this.tabControls = new Map();
-
+        this.oldList = [];
+                    
         this.onStateMenuClick = onStateMenuClick;
         this.onOperateMenuClick = onOperateMenuClick;
 
@@ -456,12 +458,9 @@ export class AgentMonitorComponent {
         let isAlarm = false;
         // 计算告警规则，多个条件按‘或’关系计算
         this.alarmQuerySelector.selectedOptions().forEach((data) => {
-            // console.log('-----',data)
             let stateExpr = `{{${state}}}`;
             if(data.value.indexOf(stateExpr) !== -1) {
                 isAlarm = eval(data.value.replace(stateExpr, stateSeconds));
-                // console.log(stateExpr, stateSeconds)
-                // console.log(data.value)
                 // 当匹配成功退出循环，剩余的条件跳过不在一一计算
                 if (isAlarm === true) {
                     return;
@@ -486,7 +485,6 @@ export class AgentMonitorComponent {
     addAlarmAgent() {
         let alarmAgents = [];
         let ulArr = []
-        let ul = document.createElement('ul');
         this._agents.forEach(agentInfo => {
             let state = agentInfo.state;
             if (agentInfo.state === AgentInfo.NOT_READY) {
@@ -503,16 +501,20 @@ export class AgentMonitorComponent {
                     if (isAlarm === true) {
                         let listNode = {};
                         listNode.id = `${agentInfo.shortNum}`;
-                        listNode.name = `${agentInfo.shortNum}`;
+                        listNode.name = `${agentInfo.agentName}`;
                         ulArr.push(listNode)
-                        // ul.appendChild(li);
                         alarmAgents.push(agentInfo);
                     }
                 }
             });
         });
-
+        // 最外层
         let alarmBox = document.getElementById('alarmBox');
+        let ul = document.createElement('ul');
+        let oldUl = alarmBox.children[0];
+        if (this.oldList.length === 0 && ulArr.length !==0) {
+            this.oldList = ulArr;
+        }
         // 首次
         if (alarmBox.childNodes.length === 0) {
             for (let i = 0; i < ulArr.length; i++) {
@@ -524,19 +526,27 @@ export class AgentMonitorComponent {
             alarmBox.appendChild(ul)
         };
 
-        // 数据增加
-
-        // 
-        let oldUl = alarmBox.children[0];
-        let oldId,nowId;
-
-        // 数据为空，则清除alarmBox
-        if (alarmAgents.length == 0) {
+        let flag = false;
+        for(let i=0;i< this.oldList.length;i++){
+            let tempVal = this.oldList[i];
+            let isFalse = ulArr.indexOf(tempVal);
+            if(isFalse == -1){
+                flag = true
+                break
+            }
+        };
+        if (flag == true) {
+            this.oldList = ulArr;
             alarmBox.removeChild(oldUl)
+            for (let i = 0; i < ulArr.length; i++) {
+                let li = document.createElement('li')
+                li.innerText = `${ulArr[i].name}`;
+                li.id = `alarmList-${ulArr[i].id}`;
+                ul.appendChild(li)
+            };
+            alarmBox.appendChild(ul)
         }
 
-        console.log('ul====',ul)
-        console.log('alarmAgents====',alarmAgents)
     }
 
     destroy() {

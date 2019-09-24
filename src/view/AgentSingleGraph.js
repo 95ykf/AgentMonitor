@@ -178,6 +178,8 @@ class AgentSingleGraph{
      * @param timerValue  时间字符串
      */
     updateAgentStateTimer(seconds, timerValue) {
+        // 添加告警的坐席
+        this.addAlarmAgent()
         if (!this.onUpdatingAgentInfo(this.agentInfo, this)) {
             return;
         }
@@ -191,8 +193,6 @@ class AgentSingleGraph{
             this.stopAlarm();
         };
 
-        // 添加告警的坐席
-        this.addAlarmAgent()
     }
 
     /**
