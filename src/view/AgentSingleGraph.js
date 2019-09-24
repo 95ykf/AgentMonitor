@@ -15,6 +15,7 @@ class AgentSingleGraph{
                     onCreated = function() {},
                     onUpdatingAgentInfo = function() {return true},
                     isStartAlarm = function() {return false},
+                    addAlarmAgent = function() {},
                 }) {
         this.id = `AgentSingleGraph-${autoIncrementId++}`;
         this.agentInfo = agentInfo;
@@ -24,6 +25,7 @@ class AgentSingleGraph{
         this.onCreated = onCreated;
         this.onUpdatingAgentInfo = onUpdatingAgentInfo;
         this.isStartAlarm = isStartAlarm;
+        this.addAlarmAgent = addAlarmAgent;
 
         this.onBodyClick = this._hideMenu.bind(this);
 
@@ -187,7 +189,10 @@ class AgentSingleGraph{
             this.startAlarm();
         } else {
             this.stopAlarm();
-        }
+        };
+
+        // 添加告警的坐席
+        this.addAlarmAgent()
     }
 
     /**

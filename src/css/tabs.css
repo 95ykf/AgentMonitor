@@ -30,6 +30,7 @@
 .nav.nav-tabs li {
     background: none;
     border: none;
+    cursor: pointer
 }
 
 .nav-tabs>li>a {

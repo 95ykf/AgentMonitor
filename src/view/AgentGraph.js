@@ -19,6 +19,7 @@ class AgentGraph extends ContentBox {
                     onCreated = function() {},
                     onUpdatingAgentInfo = function() {return true},
                     isStartAlarm = function() {return false},
+                    addAlarmAgent = function() {},
                 } = {}) {
 
         super({
@@ -37,6 +38,7 @@ class AgentGraph extends ContentBox {
                 onUpdatingAgentInfo,
                 onCreated,
                 isStartAlarm,
+                addAlarmAgent,
             });
         });
     }
