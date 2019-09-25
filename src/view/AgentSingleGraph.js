@@ -180,6 +180,7 @@ class AgentSingleGraph{
     updateAgentStateTimer(seconds, timerValue) {
         // 添加告警的坐席
         this.addAlarmAgent()
+        
         if (!this.onUpdatingAgentInfo(this.agentInfo, this)) {
             return;
         }

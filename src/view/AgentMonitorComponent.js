@@ -478,9 +478,6 @@ export class AgentMonitorComponent {
 
     /**
      * 提取触发告警的坐席
-     * @param agentInfo 坐席信息
-     * @param component 坐席UI组件
-     * @returns {boolean}
      */
     addAlarmAgent() {
         let alarmAgents = [];
@@ -500,10 +497,14 @@ export class AgentMonitorComponent {
                     // 当匹配成功退出循环，剩余的条件跳过不在一一计算
                     if (isAlarm === true) {
                         let listNode = {};
-                        listNode.id = `${agentInfo.shortNum}`;
+                        listNode.id = `${agentInfo.agentDN}`;
+                        listNode.className = `${agentInfo.state}`;
+                        listNode.shortNum = `${agentInfo.shortNum}`;
                         listNode.name = `${agentInfo.agentName}`;
+                        listNode.state = `${AgentInfo.stateDict[state]}`;
                         ulArr.push(listNode)
                         alarmAgents.push(agentInfo);
+                        return;
                     }
                 }
             });
@@ -511,42 +512,81 @@ export class AgentMonitorComponent {
         // 最外层
         let alarmBox = document.getElementById('alarmBox');
         let ul = document.createElement('ul');
-        let oldUl = alarmBox.children[0];
-        if (this.oldList.length === 0 && ulArr.length !==0) {
-            this.oldList = ulArr;
+        let oldUl = alarmBox.childNodes[0];
+        if (this.oldList.length === 0 && ulArr.length !== 0) {
+            this.oldList = alarmAgents;
         }
-        // 首次
+        // 判断是否存在ul节点 
         if (alarmBox.childNodes.length === 0) {
-            for (let i = 0; i < ulArr.length; i++) {
-                let li = document.createElement('li')
-                li.innerText = `${ulArr[i].name}`;
-                li.id = `alarmList-${ulArr[i].id}`;
-                ul.appendChild(li)
-            }
+            if (ulArr.length === 0) {
+                return
+            };
+            let listNode = this.createAlarmNode(ulArr)
+            ul.appendChild(listNode)
             alarmBox.appendChild(ul)
         };
 
-        let flag = false;
-        for(let i=0;i< this.oldList.length;i++){
-            let tempVal = this.oldList[i];
-            let isFalse = ulArr.indexOf(tempVal);
-            if(isFalse == -1){
-                flag = true
-                break
-            }
-        };
-        if (flag == true) {
-            this.oldList = ulArr;
-            alarmBox.removeChild(oldUl)
-            for (let i = 0; i < ulArr.length; i++) {
-                let li = document.createElement('li')
-                li.innerText = `${ulArr[i].name}`;
-                li.id = `alarmList-${ulArr[i].id}`;
-                ul.appendChild(li)
+        if (!this.equar(this.oldList,alarmAgents)) {
+            this.oldList = alarmAgents;
+            alarmBox.removeChild(oldUl);
+            if (ulArr.length === 0) {
+                return
             };
+            let listNode = this.createAlarmNode(ulArr)
+            ul.appendChild(listNode)
             alarmBox.appendChild(ul)
         }
 
+    }
+
+    /**
+     * 创建需要监控的节点
+     * @param alarmArr 满足告警条件的数组
+     */
+    createAlarmNode(alarmArr) {
+        let emptyEl = document.createDocumentFragment();
+        for (let i = 0; i < alarmArr.length; i++) {
+            let li = document.createElement('li');
+            li.id = `alarmList-${alarmArr[i].id}`;
+            li.className = `${alarmArr[i].className}`;
+            // 工号
+            let agentDNNode = document.createElement('p');
+            agentDNNode.className = 'job-number';
+            agentDNNode.innerText = `${alarmArr[i].shortNum}`;
+            // 姓名
+            let agentNameNode = document.createElement('p');
+            agentNameNode.className = 'agent-name';
+            agentNameNode.innerText = `${alarmArr[i].name}`;
+            // 状态
+            let agentStateNode = document.createElement('p');
+            agentStateNode.className = 'agent-state';
+            agentStateNode.innerText = `${alarmArr[i].state}`;
+
+            li.appendChild(agentDNNode);
+            li.appendChild(agentNameNode);
+            li.appendChild(agentStateNode);
+            emptyEl.appendChild(li);
+        };
+        return emptyEl
+    }
+
+    /**
+     * 判断数组是否相同
+     * @param a 数组1
+     * @param b 数组2
+     * @returns {boolean}
+     */
+    equar(a, b) {
+        if (a.length !== b.length) {
+            return false
+        } else {
+            for (let i = 0; i < a.length; i++) {
+                if (a[i] !== b[i]) {
+                    return false
+                }
+            }
+            return true;
+        }
     }
 
     destroy() {

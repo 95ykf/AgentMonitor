@@ -505,4 +505,47 @@ ul li.hold .monitor_btns span {
         box-shadow:0 0 0 #fd1d1d;
     }
 }
+/* 告警坐席 */
+#alarmBox {
+    overflow: hidden
+}
+#alarmBox ul li {
+    float: left;
+    font-size: 13px;
+    padding: 5px;
+    text-align: center;
+    margin: 0 5px 5px 0;
+    border-radius: 3px;
+    cursor: pointer;
+    background: #cccccc
+}
+#alarmBox ul li p.job-number {
+    width: 40px;
+    height: 20px;
+    border-radius: 10px;
+    margin: 0 auto;
+    background: #fff;
+    line-height: 20px;
+}
+#alarmBox ul li p.agent-name {
+    color: #fff;
+    margin-top: 5px;
+    width: 60px;
+}
+#alarmBox ul li p.agent-state {
+    color: #fff;
+    margin-top: 5px;
+}
+#alarmBox ul li.talking {
+    background: #9400D3;
+}
+#alarmBox ul li.talking p.job-number {
+    color: #9400D3
+}
+#alarmBox ul li.not_ready {
+    background: #f8ac59
+}
+#alarmBox ul li.not_ready p.job-number {
+    color: #f8ac59
+}
 /*浏览器兼容性部分*/
