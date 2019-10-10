@@ -53,11 +53,20 @@ class AgentSingleGraph{
             stateTimerNode.className = 'agent-state-timer';
             stateTimerNode.innerHTML = this.agentInfo.creationTime ? this.agentInfo.stateTimer.format() : '&nbsp;';
 
-            let stateMenu = this._stateMenu = this._generateMoreMenu([
-                {onClick: () => {this.onStateMenuClick('ready', this.agentInfo)}, name: '就绪'},
-                {onClick: () => {this.onStateMenuClick('busy', this.agentInfo)}, name: '示忙'},
-                {onClick: () => {this.onStateMenuClick('rest', this.agentInfo)}, name: '休息'},
-            ]);
+            let stateMenuOptions = [];
+            for(let stateKey in AgentInfo.stateDict) {
+                let _state = AgentInfo.stateDict[stateKey];
+                if (_state.rawState === AgentState.READY ||
+                    (_state.rawState === AgentState.NOTREADY && _state.reasonCode !== NotReadyReason.TALKING
+                        && _state.reasonCode !== NotReadyReason.NEATENING)) {
+                    stateMenuOptions.push({
+                        onClick: () => {
+                            this.onStateMenuClick(stateKey, this.agentInfo)
+                        }, name: AgentInfo.stateDict[stateKey].name
+                    });
+                }
+            }
+            let stateMenu = this._stateMenu = this._generateMoreMenu(stateMenuOptions);
             let operateMenu = this._operateMenu =this._generateMoreMenu([
                 {onClick: () => {this.onOperateMenuClick('monitor', this.agentInfo)}, name: '监听'},
                 {onClick: () => {this.onOperateMenuClick('substitute', this.agentInfo)}, name: '拦截'},

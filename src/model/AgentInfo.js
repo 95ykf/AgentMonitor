@@ -91,7 +91,7 @@ class AgentInfo extends EventEmitter {
         if (this.state === AgentInfo.NOT_READY) {
             state = AgentInfo.convertNotReadyReason(this.reasonCode);
         }
-        return (AgentInfo.stateDict[state] ?  AgentInfo.stateDict[state] : '');
+        return (AgentInfo.stateDict[state] ?  AgentInfo.stateDict[state].name : '');
     }
 
     /**
@@ -164,13 +164,12 @@ class AgentInfo extends EventEmitter {
     static setCustomNotReadyReason(notReadyReason) {
         for (let reason of notReadyReason) {
             let _notReadyStateKey = AgentInfo.reasonCodeMapping[reason.code];
-            // 如果存在删除此字典
-            if (_notReadyStateKey) {
-                delete AgentInfo.stateDict[_notReadyStateKey];
+            // 扩展的未就绪状态
+            if (!_notReadyStateKey) {
+                _notReadyStateKey = `not-ready-${reason.code}`;
+                AgentInfo.reasonCodeMapping[reason.code] = _notReadyStateKey;
             }
-
-            AgentInfo.reasonCodeMapping[reason.code] = reason.key;
-            AgentInfo.stateDict[reason.key] = reason.name;
+            AgentInfo.stateDict[_notReadyStateKey] = {name: reason.name, rawState: AgentState.NOTREADY, reasonCode: reason.code};
         }
     }
 }
@@ -189,15 +188,15 @@ AgentInfo.NOT_READY_RESTING = 'resting';
 AgentInfo.NOT_READY_NEATENING = 'neatening';
 /* 状态字典，未就绪有多个动态自字段，翻译由用户自由扩展 */
 AgentInfo.stateDict = {
-    [AgentInfo.READY]: '就绪',
-    [AgentInfo.NOT_READY_BUSY]: '示忙',
-    [AgentInfo.NOT_READY_RESTING]: '休息',
-    [AgentInfo.NOT_READY_NEATENING]: '整理',
-    [AgentInfo.TALKING]: '通话',
-    [AgentInfo.RINGING]: '振铃',
-    [AgentInfo.DIALING]: '呼叫',
-    [AgentInfo.HOLD]: '保持',
-    [AgentInfo.OFFLINE]: '离线',
+    [AgentInfo.OFFLINE]: {name: '离线', rawState: AgentState.OFFLINE, reasonCode: NotReadyReason.UNKNOWN},
+    [AgentInfo.READY]: {name: '就绪', rawState: AgentState.READY, reasonCode: NotReadyReason.UNKNOWN},
+    [AgentInfo.NOT_READY_BUSY]: {name: '示忙', rawState: AgentState.NOTREADY, reasonCode: NotReadyReason.BUSY},
+    [AgentInfo.NOT_READY_RESTING]: {name: '休息', rawState: AgentState.NOTREADY, reasonCode: NotReadyReason.RESTING},
+    [AgentInfo.NOT_READY_NEATENING]: {name: '整理', rawState: AgentState.NOTREADY, reasonCode: NotReadyReason.NEATENING},
+    [AgentInfo.TALKING]: {name: '通话', rawState: AgentState.NOTREADY, reasonCode: NotReadyReason.TALKING, partState: PartyState.TALK},
+    [AgentInfo.RINGING]: {name: '振铃', rawState: AgentState.NOTREADY, reasonCode: NotReadyReason.TALKING, partState: PartyState.RINGING},
+    [AgentInfo.DIALING]: {name: '呼叫', rawState: AgentState.NOTREADY, reasonCode: NotReadyReason.TALKING, partState: PartyState.DIALING},
+    [AgentInfo.HOLD]: {name: '保持', rawState: AgentState.NOTREADY, reasonCode: NotReadyReason.TALKING, partState: PartyState.HELD},
 };
 AgentInfo.reasonCodeMapping = {
     [NotReadyReason.BUSY]: AgentInfo.NOT_READY_BUSY,

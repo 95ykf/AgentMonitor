@@ -1,5 +1,5 @@
 import './assets/js/ie9';
-import {MessageID, NotReadyReason} from './constants';
+import {AgentState, MessageID, NotReadyReason} from './constants';
 import {AgentMonitorComponent} from './view/AgentMonitorComponent';
 import AgentMonitorInfo from './model/AgentMonitorInfo';
 import AgentInfo from './model/AgentInfo';
@@ -112,12 +112,11 @@ class AgentMonitor {
      * @param agentInfo
      */
     onStateMenuClick(action, agentInfo) {
-        if (action === 'ready') {
+        let _state = AgentInfo.stateDict[action];
+        if (_state.rawState === AgentState.READY) {
             this.agentReadyM(agentInfo.agentDN);
-        } else if (action === 'busy') {
-            this.agentNotReadyM(agentInfo.agentDN, NotReadyReason.BUSY);
-        } else if (action === 'rest') {
-            this.agentNotReadyM(agentInfo.agentDN, NotReadyReason.RESTING);
+        } else if (_state.rawState === AgentState.NOTREADY && _state.reasonCode !== NotReadyReason.TALKING) {
+            this.agentNotReadyM(agentInfo.agentDN, _state.reasonCode);
         }
     }
 

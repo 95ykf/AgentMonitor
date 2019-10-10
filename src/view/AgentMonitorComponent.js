@@ -230,7 +230,7 @@ export class AgentMonitorComponent {
                 stateKey !== AgentInfo.HOLD) {
                 let option = document.createElement('option');
                 option.value = stateKey;
-                option.innerHTML = AgentInfo.stateDict[stateKey];
+                option.innerHTML = AgentInfo.stateDict[stateKey].name;
                 stateSelect.appendChild(option);
             }
         }
@@ -261,7 +261,7 @@ export class AgentMonitorComponent {
                 return;
             }
             let _v = `{{${stateSelect.value}}}>${threshold.value}`;
-            let _n = `${AgentInfo.stateDict[stateSelect.value]}超过 ${threshold.value} 秒`;
+            let _n = `${AgentInfo.stateDict[stateSelect.value].name}超过 ${threshold.value} 秒`;
             this.alarmQuerySelector.addOption({value: _v, name: _n, selected: true})
         };
         optionsRootNode.appendChild(addAlarmBtn);
@@ -501,8 +501,8 @@ export class AgentMonitorComponent {
                         listNode.className = `${agentInfo.state}`;
                         listNode.shortNum = `${agentInfo.shortNum}`;
                         listNode.name = `${agentInfo.agentName}`;
-                        listNode.state = `${AgentInfo.stateDict[state]}`;
-                        ulArr.push(listNode)
+                        listNode.state = `${AgentInfo.stateDict[state].name}`;
+                        ulArr.push(listNode);
                         alarmAgents.push(agentInfo);
                         return;
                     }

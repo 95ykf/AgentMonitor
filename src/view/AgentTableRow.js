@@ -21,14 +21,19 @@ class AgentTableRow{
                 }) {
         this.id = `AgentTableRow-${autoIncrementId++}`;
         this.agentInfo = agentInfo;
+
         /*
          * 所有可操作动作
          * */
-        this.actionList = [
-            {'name': '就绪', 'value': 'ready'},
-            {'name': '示忙', 'value': 'busy'},
-            {'name': '休息', 'value': 'rest'},
-        ];
+        this.actionList = [];
+        for(let stateKey in AgentInfo.stateDict) {
+            let _state = AgentInfo.stateDict[stateKey];
+            if (_state.rawState === AgentState.READY ||
+                (_state.rawState === AgentState.NOTREADY && _state.reasonCode !== NotReadyReason.TALKING
+                    && _state.reasonCode !== NotReadyReason.NEATENING)) {
+                this.actionList.push({ name: AgentInfo.stateDict[stateKey].name, value: stateKey});
+            }
+        }
 
         this.onStateMenuClick = onStateMenuClick;
         this.onOperateMenuClick = onOperateMenuClick;

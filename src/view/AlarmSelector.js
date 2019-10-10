@@ -117,7 +117,7 @@ export class AlarmSelector {
                 if (tempTime == nowTime) {
                     return;
                 } else {
-                    let tip = confirm(`${AgentInfo.stateDict[tempState]} 告警状态已经存在，确定要替换吗？`);
+                    let tip = confirm(`${AgentInfo.stateDict[tempState].name} 告警状态已经存在，确定要替换吗？`);
                     if (tip == true) {
                         tempData[indexVal] = optionData
                         this._optionElements[indexVal] = listNode;
