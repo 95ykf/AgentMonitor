@@ -66,7 +66,7 @@ export class AlarmSelector {
             optionsRootNode.className = 'options';
             optionsRootNode.appendChild(this._optionsNode = document.createElement('ul'));
 
-            let localData = JSON.parse(localStorage.getItem('optionDatas'));
+            let localData = JSON.parse(localStorage.getItem('alarmOptionDatas'));
 
             if (localData !== null) {
                 localData.forEach(this.addOption.bind(this));
@@ -92,11 +92,11 @@ export class AlarmSelector {
         listNode.id = this.alarmState(optionData);
         listNode.innerText = optionData.name;
 
-        let localData = localStorage.getItem('optionDatas');
+        let localData = localStorage.getItem('alarmOptionDatas');
         // 判断是否从未监控过
         if (localData === null) {
             this.addNode(this._data,optionData,listNode);
-            localStorage.setItem('optionDatas', JSON.stringify(this._data));
+            localStorage.setItem('alarmOptionDatas', JSON.stringify(this._data));
         } else {
             // 获取当前数据状态，与循环中的数据进行比对
             let nowSts = this.alarmState(optionData);
@@ -133,7 +133,7 @@ export class AlarmSelector {
                 this.addNode(tempData,optionData,listNode);
             };
             this._data = tempData;
-            localStorage.setItem('optionDatas', JSON.stringify(this._data));
+            localStorage.setItem('alarmOptionDatas', JSON.stringify(this._data));
         };
     }
 
