@@ -39,7 +39,7 @@ class AgentSingleGraph{
             let rootNode = this.rootNode = document.createElement('li');
             rootNode.id = this.id;
             rootNode.className = `${this.agentInfo.state}`;
-
+            rootNode.classList.add(`not-ready-${this.agentInfo.reasonCode}`)
             // 工号
             let agentDNNode = document.createElement('p');
             agentDNNode.className = 'job-number';

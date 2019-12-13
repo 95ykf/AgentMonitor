@@ -498,7 +498,7 @@ export class AgentMonitorComponent {
                     if (isAlarm === true) {
                         let listNode = {};
                         listNode.id = `${agentInfo.agentDN}`;
-                        listNode.className = `${agentInfo.state}`;
+                        listNode.className = `reasonCode-${agentInfo.reasonCode}`;
                         listNode.shortNum = `${agentInfo.shortNum}`;
                         listNode.name = `${agentInfo.agentName}`;
                         listNode.state = `${AgentInfo.stateDict[state].name}`;
@@ -536,7 +536,6 @@ export class AgentMonitorComponent {
             ul.appendChild(listNode)
             alarmBox.appendChild(ul)
         }
-
     }
 
     /**

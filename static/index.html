@@ -56,9 +56,9 @@
 <div class="top">
     <div class="logocon"></div>
     <div id="test1" style="display: inline;"></div>
-    <div id="test2" style="display: inline;float: right;"></div>
-    <div id="test3" style="display: inline;float: right;position: fixed;right: 0;bottom: 0;"></div>
-    <div id="test4" style="display: inline;float: left;position: fixed;left: 0;bottom: 0;"></div>
+    <div id="test2" style="float: right;"></div>
+    <div id="test3" style="float: right;position: fixed;right: 0;bottom: 0;"></div>
+    <div id="test4" style="float: left;position: fixed;left: 0;bottom: 0;"></div>
 </div>
 <div style="padding: 10px;">
     <!-- 坐席配置 -->
@@ -144,6 +144,16 @@
             agentID: $("#corpVccIdTxt").val() + $("#agentIdTxt").val(),
             password: $("#password").val(),
             thisQueues: thisQueues,
+            customNotReadyReason: [
+                {code: '3', name:'示忙1'},
+                {code: '5', name:'休息0'},
+                {code: '11', name:'自1'},
+                {code: '12', name:'自2'},
+                {code: '13', name:'自3'},
+                {code: '14', name:'自4'},
+                {code: '15', name:'自5'},
+                {code: '16', name:'自6'},
+            ],
 
             autoIdleWhenLogin: $("#autoIdleWhenLogin").is(':checked'),
             isPhoneTakeAlong: $("#isPhoneTakeAlong").is(':checked'),
@@ -182,7 +192,9 @@
                     {code: '11', name:'自1'},
                     {code: '12', name:'自2'},
                     {code: '13', name:'自3'},
-                    {code: '14', name:'自4'}
+                    {code: '14', name:'自4'},
+                    {code: '15', name:'自5'},
+                    {code: '16', name:'自6'},
                 ]
             });
             btn.style.display = 'none';

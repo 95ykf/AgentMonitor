@@ -421,6 +421,109 @@ ul li.hold .monitor_btns span {
     background: #d4d3d3
 }
 
+/* 自定义 示忙 */
+ul li.not-ready-3 {
+    background: #f8ac59
+}
+
+ul li.not-ready-3 .job-number {
+    color: #f8ac59
+}
+
+ul li.not-ready-3 .monitor_btns span {
+    background: #e49931;
+}
+
+/* 自定义 休息 */
+ul li.not-ready-5 {
+    background: #2196f3
+}
+
+ul li.not-ready-5 .job-number {
+    color: #2196f3
+}
+
+ul li.not-ready-5 .monitor_btns span {
+    background: #1e88e5;
+}
+
+/* 自定义 not-ready-11 */
+ul li.not-ready-11 {
+    background: #795548;
+}
+
+ul li.not-ready-11 .job-number {
+    color: #795548;
+}
+
+ul li.not-ready-11 .monitor_btns span {
+    background: #8d6e63;
+}
+
+/* 自定义 not-ready-12 */
+ul li.not-ready-12 {
+    background: #5c6bc0
+}
+
+ul li.not-ready-12 .job-number {
+    color: #5c6bc0
+}
+
+ul li.not-ready-12 .monitor_btns span {
+    background: #3f51b5;
+}
+
+/* 自定义 not-ready-13 */ 
+ul li.not-ready-13 {
+    background: #66bb6a
+}
+
+ul li.not-ready-13 .job-number {
+    color: #66bb6a
+}
+
+ul li.not-ready-13 .monitor_btns span {
+    background: #4caf50;
+}
+
+/* 自定义 not-ready-14 */
+ul li.not-ready-14 {
+    background: #26c6da
+}
+
+ul li.not-ready-14 .job-number {
+    color: #26c6da
+}
+
+ul li.not-ready-14 .monitor_btns span {
+    background: #00bcd4;
+}
+
+/* 自定义 not-ready-15 */
+ul li.not-ready-15 {
+    background: #8bc34a
+}
+
+ul li.not-ready-15 .job-number {
+    color: #8bc34a
+}
+
+ul li.not-ready-15 .monitor_btns span {
+    background: #7cb342;
+}
+
+/* 自定义 not-ready-16 */
+ul li.not-ready-16 {
+    background: #ce93d8
+}
+
+ul li.not-ready-16 .job-number {
+    color: #ce93d8
+}
+
+ul li.not-ready-16 .monitor_btns span {
+    background: #ba68c8;
+}
 
 
 /*坐席监控-表格*/
@@ -536,16 +639,68 @@ ul li.hold .monitor_btns span {
     color: #fff;
     margin-top: 5px;
 }
-#alarmBox ul li.talking {
+
+#alarmBox ul li.reasonCode-1 {
     background: #9400D3;
 }
-#alarmBox ul li.talking p.job-number {
+#alarmBox ul li.reasonCode-1 p.job-number {
     color: #9400D3
 }
-#alarmBox ul li.not_ready {
+
+#alarmBox ul li.reasonCode-0,
+#alarmBox ul li.reasonCode-3 {
     background: #f8ac59
 }
-#alarmBox ul li.not_ready p.job-number {
+#alarmBox ul li.reasonCode-0 p.job-number,
+#alarmBox ul li.reasonCode-3 p.job-number {
     color: #f8ac59
 }
-/*浏览器兼容性部分*/
+
+#alarmBox ul li.reasonCode-5 {
+    background: #2196f3;
+}
+#alarmBox ul li.reasonCode-5 p.job-number {
+    color: #2196f3
+}
+
+#alarmBox ul li.reasonCode-11 {
+    background: #795548;
+}
+#alarmBox ul li.reasonCode-11 p.job-number {
+    color: #795548
+}
+
+#alarmBox ul li.reasonCode-12 {
+    background: #5c6bc0;
+}
+#alarmBox ul li.reasonCode-12 p.job-number {
+    color: #5c6bc0
+}
+
+#alarmBox ul li.reasonCode-13 {
+    background: #66bb6a;
+}
+#alarmBox ul li.reasonCode-13 p.job-number {
+    color: #66bb6a
+}
+
+#alarmBox ul li.reasonCode-14 {
+    background: #26c6da;
+}
+#alarmBox ul li.reasonCode-14 p.job-number {
+    color: #26c6da
+}
+
+#alarmBox ul li.reasonCode-15 {
+    background: #8bc34a;
+}
+#alarmBox ul li.reasonCode-15 p.job-number {
+    color: #8bc34a
+}
+
+#alarmBox ul li.reasonCode-16 {
+    background: #ce93d8;
+}
+#alarmBox ul li.reasonCode-16 p.job-number {
+    color: #ce93d8
+}
