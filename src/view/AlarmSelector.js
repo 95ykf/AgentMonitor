@@ -109,16 +109,16 @@ export class AlarmSelector {
             };
             let indexVal = stsData.indexOf(nowSts);
             // 判断告警状态与之前状态是否相同
-            if (indexVal != -1) {
+            if (indexVal !== -1) {
                 let tempOption = this._data[indexVal];
                 let tempTime = this.alarmTime(tempOption);
                 let tempState = this.alarmState(tempOption);
                 // 判断状态相同时，告警时间是否相同
-                if (tempTime == nowTime) {
+                if (tempTime === nowTime) {
                     return;
                 } else {
                     let tip = confirm(`${AgentInfo.stateDict[tempState].name} 告警状态已经存在，确定要替换吗？`);
-                    if (tip == true) {
+                    if (tip === true) {
                         tempData[indexVal] = optionData
                         this._optionElements[indexVal] = listNode;
 
@@ -142,6 +142,61 @@ export class AlarmSelector {
         this._optionElements.push(listNode);
         this._optionsNode.appendChild(listNode);
         listNode.onclick = this.optionClick.bind(this, totalData.length - 1);
+    }
+
+    /**
+     * 删除一个选项
+     * @param optionData 
+     */
+    removeOption(optionData) {
+        let localData = localStorage.getItem('alarmOptionDatas');
+        // 判断是否从未监控过
+        if (localData === null) {
+            return
+        } else {
+            let nowSts = this.alarmState(optionData);
+            let tempData = this._data;
+            let stsData = [];
+            for (let i = 0; i < this._data.length; i++) {
+                let forSts = this.alarmState(this._data[i]);
+                stsData.push(forSts);
+            };
+            let indexVal = stsData.indexOf(nowSts);
+            // 判断告警状态与之前状态是否相同
+            if (indexVal !== -1) {
+                let tempOption = this._data[indexVal];
+                let tempState = this.alarmState(tempOption);
+                
+                let tip = confirm(`确定要删除 ${AgentInfo.stateDict[tempState].name} 状态的超时告警吗？`);
+                if (tip === true) {
+                    let oldNode = this._optionsNode.children[indexVal];
+                    this._optionsNode.removeChild(oldNode);
+                    this._optionElements.splice(indexVal,1)
+                    tempData.splice(indexVal,1)
+                    this._data = tempData;
+                    localStorage.setItem('alarmOptionDatas', JSON.stringify(this._data));
+
+                } else {
+                    return;
+                }
+                
+            } else {
+                alert('您没有添加此告警状态')
+            };
+        };
+    }
+
+    /**
+     * 删除全部选项
+     */
+    removeOptionAll() {
+        let childs = this._optionsNode.childNodes;
+        for (let i = childs.length - 1 ; i >= 0; i--) {
+            this._optionsNode.removeChild(childs[i]); 
+        };
+        this._optionElements.splice(0);
+        this._data.splice(0);
+        localStorage.removeItem('alarmOptionDatas');
     }
 
     /**

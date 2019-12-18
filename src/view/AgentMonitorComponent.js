@@ -266,6 +266,30 @@ export class AgentMonitorComponent {
         };
         optionsRootNode.appendChild(addAlarmBtn);
 
+        // 删除按钮
+        let removeAlarmBtn = document.createElement('button');
+        removeAlarmBtn.className = 'cc-btn btn-sm btn-danger pull-left m-l-8';
+        removeAlarmBtn.innerText = '删除';
+        removeAlarmBtn.onclick = () => {
+            if (!stateSelect.value) {
+                return
+            }
+            let _v = `{{${stateSelect.value}}}`;
+            let _n = `${AgentInfo.stateDict[stateSelect.value].name}`;
+            this.alarmQuerySelector.removeOption({value: _v, name: _n})
+            
+        };
+        optionsRootNode.appendChild(removeAlarmBtn);
+
+        // 全部删除按钮
+        let removeAllAlarmBtn = document.createElement('button');
+        removeAllAlarmBtn.className = 'cc-btn btn-sm btn-danger pull-left m-l-8';
+        removeAllAlarmBtn.innerText = '全部删除';
+        removeAllAlarmBtn.onclick = () => {
+            this.alarmQuerySelector.removeOptionAll()
+        };
+        optionsRootNode.appendChild(removeAllAlarmBtn);
+
         emptyEl.appendChild(row);
         emptyEl.appendChild(alarmSelectorNode.rootNode);
 
