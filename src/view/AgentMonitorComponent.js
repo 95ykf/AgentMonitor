@@ -53,6 +53,7 @@ export class AgentMonitorComponent {
             queryNode.appendChild(this._generateStateSelector());
             queryNode.appendChild(this._generateTypeSelector());
             queryNode.appendChild(this._generateAlarmSelector());
+            rootNode.appendChild(this._queryToggle());
             rootNode.appendChild(queryNode);
 
             rootNode.appendChild(this._generateAlarmContent());
@@ -66,7 +67,34 @@ export class AgentMonitorComponent {
         }
         return this;
     }
-
+    /**
+     * 生成收起按钮
+     * @private
+     */
+    _queryToggle() {
+        let toggleBtn = document.createElement('button');
+        let slideUp = false;
+        toggleBtn.className = 'cc-btn btn-sm btn-primary';
+        toggleBtn.innerHTML = '收起';
+        toggleBtn.style.marginBottom = '-8px';
+        toggleBtn.style.marginLeft = '5px';
+        toggleBtn.style.paddingTop = '3px';
+        toggleBtn.style.paddingBottom = '3px';
+        toggleBtn.style.paddingLeft = '6px';
+        toggleBtn.style.paddingRight = '6px';
+        toggleBtn.onclick = () => {
+            if (slideUp === false) {
+                document.querySelector('.query-selector').style.display = 'none';
+                toggleBtn.innerHTML = '展开';
+                slideUp = true
+            } else {
+                document.querySelector('.query-selector').style.display = 'block';
+                toggleBtn.innerHTML = '收起';
+                slideUp = false
+            }
+        }
+        return toggleBtn
+    }  
     /**
      * 生成监控组选择器
      * @private
@@ -342,6 +370,8 @@ export class AgentMonitorComponent {
                 isStartAlarm: this.isStartAlarm.bind(this),
             });
             this._tableBoxs.set(group.id, agentTableBox);
+            console.log(agentGraphBox)
+            console.log(agentGraphBox.create().rootNode)
             graphTabs.add({
                 id: group.id, title: group.name, element: agentGraphBox.create().rootNode,
                 closable: false,
@@ -351,9 +381,11 @@ export class AgentMonitorComponent {
                 closable: false,
             });
         });
+        console.log(monitorGroups);
+        console.log(monitorGroups[0].id);
         graphTabs.selectById(monitorGroups[0].id);
         tableTabs.selectById(monitorGroups[0].id);
-        // 选中后新新当前tab
+        // 选中后更新当前tab
         graphTabs.onSelected = (tab, newIndex) => {
             this.refreshActiveTab(tab.id);
         };

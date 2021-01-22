@@ -421,6 +421,19 @@ ul li.hold .monitor_btns span {
     background: #d4d3d3
 }
 
+/* 自定义 整理 */
+ul li.not_ready.not-ready-0 {
+    background: #dc4d2b
+}
+
+ul li.not_ready.not-ready-0 .job-number {
+    color: #dc4d2b
+}
+
+ul li.not_ready.not-ready-0 .monitor_btns span {
+    background: #fa5c34;
+}
+
 /* 自定义 示忙 */
 ul li.not_ready.not-ready-3 {
     background: #f8ac59
@@ -647,11 +660,15 @@ ul li.not_ready.not-ready-16 .monitor_btns span {
     color: #9400D3
 }
 
-#alarmBox ul li.reasonCode-0,
+#alarmBox ul li.reasonCode-0 {
+    background: #dc4d2b;
+}
 #alarmBox ul li.reasonCode-3 {
     background: #f8ac59
 }
-#alarmBox ul li.reasonCode-0 p.job-number,
+#alarmBox ul li.reasonCode-0 p.job-number {
+    color: #fa5c34;
+}
 #alarmBox ul li.reasonCode-3 p.job-number {
     color: #f8ac59
 }
