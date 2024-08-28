@@ -41,7 +41,7 @@
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "postcss-loader": "^3.0.0",
     "url-loader": "^1.1.2",
-    "webpack": "^4.23.1",
+    "webpack": "^5.94.0",
     "webpack-bundle-analyzer": "^3.0.3",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.11",
